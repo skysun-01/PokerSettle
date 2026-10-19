@@ -32,9 +32,11 @@ powershell -ExecutionPolicy Bypass -File scripts\<script>.ps1
 
 ## Run it on Windows
 
-**While developing:** `scripts\run-windows.ps1` builds and starts the app. Close the app before running it again.
+**While developing:** Open the solution in Visual Studio, select the Windows target, and run the app. To build it from PowerShell:
 
-**As a normal program:** `scripts\publish-windows.ps1` creates `artifacts\windows\` with **PokerSettle.exe** and everything it needs (no .NET install required). Copy the folder wherever you like and pin a shortcut to the Start menu or taskbar. The first time, Windows SmartScreen may warn about an unknown publisher: choose *More info → Run anyway*.
+```powershell
+dotnet build src\PokerSettle.App -f net10.0-windows10.0.19041.0
+```
 
 The app runs *unpackaged* (a plain .exe), so it keeps its data in the same folder no matter where you put the program.
 
@@ -58,15 +60,9 @@ powershell -ExecutionPolicy Bypass -File scripts\build-android-release.ps1
 
 It takes the keystore password from `POKERSETTLE_KEYSTORE_PASSWORD`, else from `keystore-password.txt` next to the keystore, else asks. It builds `artifacts\PokerSettle-1.0.0.apk` (about 42 MB; runs on 64-bit and 32-bit ARM phones) and checks it: the signature, that it does **not** request internet access, and that its native libraries support 16 KB memory pages (needed on newer phones).
 
-### 3. Put it on the phone (pick one)
+### 3. Install it
 
-**USB:** on the phone, enable *Developer options* (Settings → About phone → tap *Build number* 7 times), then turn on *USB debugging*. Connect the cable, accept the prompt on the phone, and run:
-
-```powershell
-powershell -ExecutionPolicy Bypass -File scripts\install-android.ps1
-```
-
-**Sideload:** copy the APK to the phone (USB, Google Drive, WhatsApp to yourself…), tap it in your file manager and allow *Install unknown apps* for that app when asked.
+Copy the APK to the phone (for example, over USB) and tap it in the file manager. Allow *Install unknown apps* for that app when asked. For development, deploy directly to a connected device from Visual Studio.
 
 To update later, build and install a new APK the same way; your data is kept.
 
@@ -120,8 +116,6 @@ Off by default, and when off nothing is written to disk.
 | Problem | What to do |
 |---|---|
 | Build says a workload is missing | `dotnet workload install maui-android maui-windows` (or add the MAUI workload in the Visual Studio Installer). |
-| `run-windows.ps1` says the app is already running | Close Poker Settle (it locks its files while running) and run the script again. |
-| `install-android.ps1` finds no phone | Use a data cable, enable USB debugging, accept the "Allow USB debugging?" prompt on the phone, and run `adb devices`. Some PCs need the phone maker's USB driver. |
 | `INSTALL_FAILED_UPDATE_INCOMPATIBLE` | The installed app was signed with a different key (e.g. a debug build). Export a backup in the app, uninstall it, install the APK, import the backup. |
 | "We couldn't open your data" screen | The database file was damaged. It was moved aside (renamed `.corrupt-<date>`, never deleted) and a fresh one started. Import your latest backup from that screen or from Settings. |
 | Amounts look wrong (symbol, commas) | Settings → Money: pick the currency and number format. The default is Indian rupees with Indian grouping (₹1,25,000). |
@@ -130,7 +124,7 @@ Off by default, and when off nothing is written to disk.
 
 ## Development
 
-- `scripts\test.ps1` runs all tests: money, settlement (including FsCheck property tests), stats, suggestions, migrations, corruption recovery, logging, backup round-trip, a 2,000-game performance check and an end-to-end ViewModel test of a whole game night.
+- `dotnet test tests\PokerSettle.Tests` runs all tests: money, settlement (including FsCheck property tests), stats, suggestions, migrations, corruption recovery, logging, backup round-trip, a 2,000-game performance check and an end-to-end ViewModel test of a whole game night.
 - Debug builds have **Settings → Developer → Use demo database**, a separate file with 40 players and 2,000 games (marked DEMO); your real data isn't touched.
 - Architecture, layout and conventions are in [CLAUDE.md](CLAUDE.md). The build plan and progress are in [PLAN.md](PLAN.md).
 

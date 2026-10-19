@@ -80,4 +80,4 @@ if ($LASTEXITCODE -ne 0) { throw "zipalign -P 16 check failed." }
 $size = [math]::Round((Get-Item $apk).Length / 1MB, 1)
 Write-Host ""
 Write-Host "Done: $apk ($size MB)" -ForegroundColor Green
-Write-Host "Install on a phone connected by USB: scripts\install-android.ps1"
+Write-Host "Copy the APK to a phone to install it, or deploy to a connected device from Visual Studio."

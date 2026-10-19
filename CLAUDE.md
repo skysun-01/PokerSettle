@@ -8,12 +8,10 @@ All scripts are Windows PowerShell 5.1-compatible; run them with `powershell -Ex
 
 | Task | Command |
 |---|---|
-| All tests (unit, FsCheck, migrations, perf, ViewModel integration) | `dotnet test tests\PokerSettle.Tests` or `scripts\test.ps1` |
-| Build + run on Windows | `scripts\run-windows.ps1` (close the running app first: it locks `bin\Debug`) |
+| All tests (unit, FsCheck, migrations, perf, ViewModel integration) | `dotnet test tests\PokerSettle.Tests` |
+| Build Windows | `dotnet build src\PokerSettle.App -f net10.0-windows10.0.19041.0` |
 | Build Android (debug) | `dotnet build src\PokerSettle.App -f net10.0-android` |
-| Build Windows only | `dotnet build src\PokerSettle.App -f net10.0-windows10.0.19041.0` |
 | Signed release APK (+ signature, no-INTERNET and 16 KB checks) | `scripts\build-android-release.ps1` (keystore from `scripts\create-keystore.ps1`) |
-| Self-contained Windows folder | `scripts\publish-windows.ps1` → `artifacts\windows\PokerSettle.exe` |
 | Check native libs are 16 KB aligned | `scripts\check-16kb-alignment.ps1 <apk/aar/folder>` |
 
 Debug-only environment variables (ignored in Release): `POKERSETTLE_DATA_DIR=<folder>` runs against a scratch data folder; `POKERSETTLE_DEBUG_LOG=1` forces debug logging on. Use them to run a second copy without touching real data (build with `-p:BaseOutputPath=<elsewhere>\` if the real app is running).
