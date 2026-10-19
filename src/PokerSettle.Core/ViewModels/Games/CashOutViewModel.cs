@@ -166,6 +166,31 @@ public sealed partial class CashOutViewModel : ViewModelBase, IQueryReceiver
 
     public bool CanContinueUnbalanced => !IsFixSelected;
 
+    // The three options are exclusive here too, not only in the radio group on screen.
+    partial void OnIsFixSelectedChanged(bool value)
+    {
+        if (!value) return;
+        IsSplitSelected = false;
+        IsAssignSelected = false;
+        ErrorText = null;
+    }
+
+    partial void OnIsSplitSelectedChanged(bool value)
+    {
+        if (!value) return;
+        IsFixSelected = false;
+        IsAssignSelected = false;
+        ErrorText = null;
+    }
+
+    partial void OnIsAssignSelectedChanged(bool value)
+    {
+        if (!value) return;
+        IsFixSelected = false;
+        IsSplitSelected = false;
+        ErrorText = null;
+    }
+
     public void ApplyQuery(IDictionary<string, object> query)
     {
         if (QueryLong(query, Routes.GameId) is { } id) _gameId = id;

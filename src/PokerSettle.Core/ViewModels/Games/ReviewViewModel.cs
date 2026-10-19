@@ -20,6 +20,9 @@ public sealed partial class ReviewViewModel : ViewModelBase, IQueryReceiver
 {
     public static readonly IReadOnlyList<string> ModeLabels = ["Fewest payments", "Banker"];
 
+    /// <summary>Where Finalize goes: back past review, cash-out and the live game, to the game's details.</summary>
+    public const string FinishedRoute = "../../../" + Routes.GameDetail;
+
     private long _gameId;
     private DiscrepancyResolution _resolution;
     private long? _assignedId;
@@ -222,6 +225,7 @@ public sealed partial class ReviewViewModel : ViewModelBase, IQueryReceiver
         }
         Messenger.Send(new DataChangedMessage(DataArea.Games | DataArea.Results | DataArea.Payments, _gameId));
         Snackbar.Show("Game finalized. Share the payments with everyone.");
-        await Navigation.GoToAsync($"{Routes.Tab(Routes.Home)}/{Routes.GameDetail}", new Dictionary<string, object> { [Routes.GameId] = _gameId });
+        // Pop review, cash-out and live game (the stack is always live → cash-out → review), then show the result.
+        await Navigation.GoToAsync(FinishedRoute, new Dictionary<string, object> { [Routes.GameId] = _gameId });
     });
 }

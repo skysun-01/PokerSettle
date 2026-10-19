@@ -24,6 +24,7 @@ public sealed partial class SettingsViewModel : ViewModelBase
     private readonly IClipboardService _clipboard;
     private readonly IAppEnvironment _environment;
     private readonly DebugReportBuilder _report;
+    private readonly Backup.BackupCoordinator _backup;
     private bool _loading;
 
     public SettingsViewModel(
@@ -33,7 +34,8 @@ public sealed partial class SettingsViewModel : ViewModelBase
         IThemeService theme,
         IClipboardService clipboard,
         IAppEnvironment environment,
-        DebugReportBuilder report)
+        DebugReportBuilder report,
+        Backup.BackupCoordinator backup)
         : base(services)
     {
         _logSwitch = logSwitch;
@@ -42,9 +44,44 @@ public sealed partial class SettingsViewModel : ViewModelBase
         _clipboard = clipboard;
         _environment = environment;
         _report = report;
+        _backup = backup;
         IsDeveloperVisible = environment.IsDebugBuild;
         LoadFromSettings();
+        Messenger.Register<SettingsViewModel, DataChangedMessage>(this, static (r, m) =>
+        {
+            if (r.IsActive) _ = r.RunSafeAsync(r.RefreshInfoAsync, "Refresh");
+        });
     }
+
+    [RelayCommand]
+    private Task ExportAsync() => RunSafeAsync(async () =>
+    {
+        await _backup.ExportToFileAsync();
+        await RefreshInfoAsync();
+    });
+
+    [RelayCommand]
+    private Task ShareBackupAsync() => RunSafeAsync(async () =>
+    {
+        await _backup.ShareAsync();
+        await RefreshInfoAsync();
+    });
+
+    [RelayCommand]
+    private Task ImportAsync() => RunSafeAsync(async () =>
+    {
+        if (await _backup.ImportAsync())
+        {
+            LoadFromSettings();
+            await RefreshInfoAsync();
+        }
+    });
+
+    [RelayCommand]
+    private Task ClearAllAsync() => RunSafeAsync(async () =>
+    {
+        if (await _backup.ClearAllAsync()) await RefreshInfoAsync();
+    });
 
     public IReadOnlyList<string> CurrencyLabels { get; } = SettingsOptions.Currencies.Select(c => c.Label).ToList();
     public IReadOnlyList<string> CultureLabels { get; } = SettingsOptions.Cultures.Select(c => c.Label).ToList();

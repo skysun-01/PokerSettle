@@ -27,6 +27,8 @@ public static class CoreServiceCollectionExtensions
         services.AddSingleton<CoreServices>();
         services.AddSingleton<KeepAwakeCoordinator>();
         services.AddSingleton<DebugReportBuilder>();
+        services.AddSingleton<Backup.BackupService>();
+        services.AddSingleton<Backup.BackupCoordinator>();
 
         // Tabs
         services.AddSingleton<HomeViewModel>();
@@ -37,6 +39,7 @@ public static class CoreServiceCollectionExtensions
 
         // Pushed pages
         services.AddTransient<LogsViewModel>();
+        services.AddTransient<RecoveryViewModel>();
         services.AddTransient<PlayerEditViewModel>();
         services.AddTransient<PlayerDetailViewModel>();
         services.AddTransient<NewGameViewModel>();

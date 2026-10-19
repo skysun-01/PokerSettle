@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                xmlns:pages="clr-namespace:PokerSettle.App.Pages"
+                xmlns:vm="clr-namespace:PokerSettle.Core.ViewModels.Settings;assembly=PokerSettle.Core"
+                x:Class="PokerSettle.App.Pages.RecoveryPage"
+                x:DataType="vm:RecoveryViewModel"
+                Title="Data recovery">
+    <ScrollView>
+        <VerticalStackLayout Padding="20,16,20,32" Spacing="12" MaximumWidthRequest="640">
+            <Label Text="We couldn't open your data" Style="{StaticResource Heading}" />
+            <Label Text="{Binding Explanation}" FontSize="17" />
+            <Border Style="{StaticResource Card}" IsVisible="{Binding HasMovedFile}">
+                <VerticalStackLayout Spacing="4">
+                    <Label Text="The old file was moved to" Style="{StaticResource Caption}" />
+                    <Label Text="{Binding MovedTo}" FontSize="14" LineBreakMode="CharacterWrap" />
+                </VerticalStackLayout>
+            </Border>
+            <Label Text="{Binding Reason, StringFormat='Details: {0}'}" Style="{StaticResource Caption}" />
+            <Button Text="Import a backup" Command="{Binding ImportCommand}" Style="{StaticResource BigButton}"
+                    SemanticProperties.Hint="Pick a poker-settle-backup .json file to restore" />
+            <Button Text="Continue with empty data" Command="{Binding ContinueCommand}" Style="{StaticResource OutlineButton}" />
+        </VerticalStackLayout>
+    </ScrollView>
+</pages:BasePage>

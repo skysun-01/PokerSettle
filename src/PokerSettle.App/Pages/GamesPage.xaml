@@ -32,20 +32,18 @@
             </CollectionView.EmptyView>
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="vm:GameRow">
-                    <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto" Padding="6,10" ColumnSpacing="12" RowSpacing="2"
-                          MinimumHeightRequest="64" SemanticProperties.Description="{Binding Description}">
-                        <Label Text="{Binding Title}" Style="{StaticResource Strong}" LineBreakMode="TailTruncation" />
-                        <Label Grid.Row="1" Grid.RowSpan="2" Text="{Binding Subtitle}" Style="{StaticResource Caption}" />
-                        <VerticalStackLayout Grid.Column="1" Grid.RowSpan="3" Spacing="4" VerticalOptions="Center" HorizontalOptions="End">
-                            <Border Style="{StaticResource BadgeProgress}" IsVisible="{Binding IsInProgress}" HorizontalOptions="End">
-                                <Label Text="In progress" Style="{StaticResource BadgeProgressText}" />
-                            </Border>
-                            <Border Style="{StaticResource BadgeUnpaid}" IsVisible="{Binding HasUnpaid}" HorizontalOptions="End">
-                                <Label Text="{Binding UnpaidText}" Style="{StaticResource BadgeUnpaidText}" />
-                            </Border>
-                            <Label Text="{Binding TopWinnerText}" Style="{StaticResource Caption}" IsVisible="{Binding HasTopWinner}" HorizontalTextAlignment="End" />
-                        </VerticalStackLayout>
-                        <Button Grid.ColumnSpan="2" Grid.RowSpan="3" Style="{StaticResource RowButton}" Command="{Binding OpenCommand}" CommandParameter="{Binding .}" SemanticProperties.Description="{Binding Description}" />
+                    <!-- Flat: an in-progress game never has unpaid payments, so the two badges share a cell. -->
+                    <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" Padding="6,10" ColumnSpacing="12" RowSpacing="2" MinimumHeightRequest="64">
+                        <Label Text="{Binding Title}" Style="{StaticResource Strong}" LineBreakMode="TailTruncation" VerticalOptions="Center" />
+                        <Label Grid.Row="1" Text="{Binding Subtitle}" Style="{StaticResource Caption}" />
+                        <Border Grid.Column="1" Style="{StaticResource BadgeProgress}" IsVisible="{Binding IsInProgress}" HorizontalOptions="End">
+                            <Label Text="In progress" Style="{StaticResource BadgeProgressText}" />
+                        </Border>
+                        <Border Grid.Column="1" Style="{StaticResource BadgeUnpaid}" IsVisible="{Binding HasUnpaid}" HorizontalOptions="End">
+                            <Label Text="{Binding UnpaidText}" Style="{StaticResource BadgeUnpaidText}" />
+                        </Border>
+                        <Label Grid.Column="1" Grid.Row="1" Text="{Binding TopWinnerText}" Style="{StaticResource Caption}" IsVisible="{Binding HasTopWinner}" HorizontalTextAlignment="End" />
+                        <Button Grid.ColumnSpan="2" Grid.RowSpan="2" Style="{StaticResource RowButton}" Command="{Binding OpenCommand}" CommandParameter="{Binding .}" SemanticProperties.Description="{Binding Description}" />
                     </Grid>
                 </DataTemplate>
             </CollectionView.ItemTemplate>

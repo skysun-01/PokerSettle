@@ -2,12 +2,197 @@
 <pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
                 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                 xmlns:pages="clr-namespace:PokerSettle.App.Pages"
+                xmlns:controls="clr-namespace:PokerSettle.App.Controls"
                 xmlns:vm="clr-namespace:PokerSettle.Core.ViewModels;assembly=PokerSettle.Core"
+                xmlns:board="clr-namespace:PokerSettle.Core.ViewModels.Board;assembly=PokerSettle.Core"
+                xmlns:games="clr-namespace:PokerSettle.Core.ViewModels.Games;assembly=PokerSettle.Core"
                 x:Class="PokerSettle.App.Pages.HomePage"
                 x:DataType="vm:HomeViewModel"
                 Title="{Binding Title}">
-    <VerticalStackLayout Padding="16" Spacing="12" MaximumWidthRequest="760">
-        <Label Text="Your home screen arrives in phase 4." Style="{StaticResource Secondary}" />
-        <Button Text="New game" Command="{Binding NewGameCommand}" Style="{StaticResource BigButton}" />
-    </VerticalStackLayout>
+    <ScrollView>
+        <Grid x:Name="Columns" ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="20" Padding="16,8,16,32" MaximumWidthRequest="1200">
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroup x:Name="Layout">
+                    <VisualState x:Name="Narrow">
+                        <VisualState.StateTriggers>
+                            <AdaptiveTrigger MinWindowWidth="0" />
+                        </VisualState.StateTriggers>
+                        <VisualState.Setters>
+                            <Setter TargetName="LeftPanel" Property="Grid.ColumnSpan" Value="2" />
+                            <Setter TargetName="RightPanel" Property="Grid.Row" Value="1" />
+                            <Setter TargetName="RightPanel" Property="Grid.Column" Value="0" />
+                            <Setter TargetName="RightPanel" Property="Grid.ColumnSpan" Value="2" />
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="Wide">
+                        <VisualState.StateTriggers>
+                            <AdaptiveTrigger MinWindowWidth="1000" />
+                        </VisualState.StateTriggers>
+                        <VisualState.Setters>
+                            <Setter TargetName="LeftPanel" Property="Grid.ColumnSpan" Value="1" />
+                            <Setter TargetName="RightPanel" Property="Grid.Row" Value="0" />
+                            <Setter TargetName="RightPanel" Property="Grid.Column" Value="1" />
+                            <Setter TargetName="RightPanel" Property="Grid.ColumnSpan" Value="1" />
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+
+            <!-- Left: what to do now -->
+            <VerticalStackLayout x:Name="LeftPanel" Spacing="12">
+
+                <!-- After a crash -->
+                <Border Style="{StaticResource Notice}" IsVisible="{Binding ShowCrashPrompt}">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="The app closed unexpectedly last time." Style="{StaticResource Strong}"
+                               TextColor="{AppThemeBinding Light={StaticResource WarningTextLight}, Dark={StaticResource WarningTextDark}}"
+                               SemanticProperties.HeadingLevel="Level2" />
+                        <Label Text="Your data is safe. Turn on debug logging so it can be diagnosed if it happens again?"
+                               TextColor="{AppThemeBinding Light={StaticResource WarningTextLight}, Dark={StaticResource WarningTextDark}}" />
+                        <FlexLayout Wrap="Wrap">
+                            <Button Text="Turn on debug logging" Command="{Binding EnableDebugLoggingCommand}" Margin="0,0,8,8" />
+                            <Button Text="Export my data" Style="{StaticResource OutlineButton}" Command="{Binding ExportAfterCrashCommand}" Margin="0,0,8,8" />
+                            <Button Text="Dismiss" Style="{StaticResource TextButton}" Command="{Binding DismissCrashPromptCommand}" Margin="0,0,8,8" />
+                        </FlexLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Game in progress -->
+                <Border Style="{StaticResource Card}" IsVisible="{Binding HasGameInProgress}">
+                    <VerticalStackLayout Spacing="8">
+                        <Border Style="{StaticResource BadgeProgress}" HorizontalOptions="Start">
+                            <Label Text="In progress" Style="{StaticResource BadgeProgressText}" />
+                        </Border>
+                        <Label Text="{Binding ResumeTitle}" Style="{StaticResource Title}" />
+                        <Label Text="{Binding ResumeDetails}" Style="{StaticResource Secondary}" />
+                        <Button Text="Resume game" Command="{Binding ResumeCommand}" Style="{StaticResource BigButton}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- New game: the main action when nothing is in progress -->
+                <Button Text="New game" Command="{Binding NewGameCommand}" Style="{StaticResource BigButton}" MinimumHeightRequest="64" FontSize="20"
+                        SemanticProperties.Hint="Start a new game night">
+                    <Button.Triggers>
+                        <DataTrigger TargetType="Button" Binding="{Binding HasGameInProgress}" Value="True">
+                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource SurfaceVariantLight}, Dark={StaticResource SurfaceVariantDark}}" />
+                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrimaryLight}, Dark={StaticResource PrimaryDark}}" />
+                            <Setter Property="MinimumHeightRequest" Value="52" />
+                            <Setter Property="FontSize" Value="17" />
+                        </DataTrigger>
+                    </Button.Triggers>
+                </Button>
+
+                <!-- First run -->
+                <Border Style="{StaticResource Card}" IsVisible="{Binding ShowWelcome}">
+                    <Label Text="{Binding WelcomeText}" Style="{StaticResource Secondary}" FontSize="16" />
+                </Border>
+
+                <!-- Gentle backup reminder -->
+                <Border Style="{StaticResource Notice}" IsVisible="{Binding ShowBackupReminder}">
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="{Binding BackupReminderText}"
+                               TextColor="{AppThemeBinding Light={StaticResource WarningTextLight}, Dark={StaticResource WarningTextDark}}" />
+                        <HorizontalStackLayout Spacing="8">
+                            <Button Text="Back up now" Style="{StaticResource OutlineButton}" Command="{Binding ExportBackupCommand}" />
+                            <Button Text="Not now" Style="{StaticResource TextButton}" Command="{Binding DismissBackupReminderCommand}"
+                                    SemanticProperties.Hint="Hides this until another game finishes" />
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Pending payments, grouped by who owes -->
+                <VerticalStackLayout IsVisible="{Binding HasPending}" Spacing="6">
+                    <Label Text="{Binding PendingTitle}" Style="{StaticResource SectionTitle}" />
+                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding PendingGroups}" Spacing="8">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="vm:PendingGroup">
+                                <Border Style="{StaticResource Card}" Padding="14,10">
+                                    <VerticalStackLayout Spacing="4">
+                                        <Label SemanticProperties.HeadingLevel="Level3">
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="{Binding PayerName}" FontFamily="OpenSansSemibold" />
+                                                    <Span Text=" " />
+                                                    <Span Text="{Binding Summary}" />
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+                                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding Items}">
+                                            <BindableLayout.ItemTemplate>
+                                                <DataTemplate x:DataType="vm:PendingItem">
+                                                    <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="8">
+                                                        <Label Text="{Binding ShortText}" VerticalOptions="Center" />
+                                                        <Label Grid.Row="1" Text="{Binding GameText}" Style="{StaticResource Caption}" />
+                                                        <Button Grid.RowSpan="2" Style="{StaticResource RowButton}" Command="{Binding OpenGameCommand}" CommandParameter="{Binding .}"
+                                                                SemanticProperties.Description="{Binding Text}" SemanticProperties.Hint="Opens the game" />
+                                                        <Button Grid.Column="1" Grid.RowSpan="2" Text="Mark paid" Style="{StaticResource OutlineButton}"
+                                                                Command="{Binding MarkPaidCommand}" CommandParameter="{Binding .}" VerticalOptions="Center"
+                                                                SemanticProperties.Description="{Binding MarkPaidDescription}" />
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </BindableLayout.ItemTemplate>
+                                        </VerticalStackLayout>
+                                    </VerticalStackLayout>
+                                </Border>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+
+            <!-- Right: how things stand -->
+            <VerticalStackLayout x:Name="RightPanel" Grid.Column="1" Spacing="6">
+                <VerticalStackLayout IsVisible="{Binding HasTopPlayers}" Spacing="6">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="Top of the board" Style="{StaticResource SectionTitle}" />
+                        <Button Grid.Column="1" Text="See board" Style="{StaticResource TextButton}" Command="{Binding OpenBoardCommand}" VerticalOptions="End" />
+                    </Grid>
+                    <Border Style="{StaticResource Card}" Padding="12,4">
+                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding TopPlayers}">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="board:BoardItem">
+                                    <Grid ColumnDefinitions="36,Auto,*,Auto" ColumnSpacing="10" Padding="0,8">
+                                        <Label Text="{Binding RankText}" Style="{StaticResource Strong}" VerticalOptions="Center" />
+                                        <controls:AvatarView Grid.Column="1" Initials="{Binding Initials}" ColorHex="{Binding Color}" Size="36" VerticalOptions="Center" />
+                                        <Label Grid.Column="2" Text="{Binding Name}" Style="{StaticResource Strong}" VerticalOptions="Center" LineBreakMode="TailTruncation" />
+                                        <controls:SignedLabel Grid.Column="3" Text="{Binding NetText}" Sign="{Binding NetSign}" FontSize="17" VerticalOptions="Center" />
+                                        <Button Grid.ColumnSpan="4" Style="{StaticResource RowButton}" Command="{Binding OpenCommand}" CommandParameter="{Binding .}"
+                                                SemanticProperties.Description="{Binding Description}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+                    </Border>
+                </VerticalStackLayout>
+
+                <VerticalStackLayout IsVisible="{Binding HasRecentGames}" Spacing="6">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="Recent games" Style="{StaticResource SectionTitle}" />
+                        <Button Grid.Column="1" Text="All games" Style="{StaticResource TextButton}" Command="{Binding OpenGamesCommand}" VerticalOptions="End" />
+                    </Grid>
+                    <Border Style="{StaticResource Card}" Padding="12,4">
+                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding RecentGames}">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="games:GameRow">
+                                    <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="10" RowSpacing="2" Padding="0,8">
+                                        <Label Text="{Binding Title}" Style="{StaticResource Strong}" LineBreakMode="TailTruncation" VerticalOptions="Center" />
+                                        <Label Grid.Row="1" Text="{Binding Subtitle}" Style="{StaticResource Caption}" />
+                                        <Border Grid.Column="1" Style="{StaticResource BadgeProgress}" IsVisible="{Binding IsInProgress}" HorizontalOptions="End">
+                                            <Label Text="In progress" Style="{StaticResource BadgeProgressText}" />
+                                        </Border>
+                                        <Border Grid.Column="1" Style="{StaticResource BadgeUnpaid}" IsVisible="{Binding HasUnpaid}" HorizontalOptions="End">
+                                            <Label Text="{Binding UnpaidText}" Style="{StaticResource BadgeUnpaidText}" />
+                                        </Border>
+                                        <Label Grid.Column="1" Grid.Row="1" Text="{Binding TopWinnerText}" Style="{StaticResource Caption}" IsVisible="{Binding HasTopWinner}" HorizontalTextAlignment="End" />
+                                        <Button Grid.ColumnSpan="2" Grid.RowSpan="2" Style="{StaticResource RowButton}" Command="{Binding OpenCommand}" CommandParameter="{Binding .}"
+                                                SemanticProperties.Description="{Binding Description}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+                    </Border>
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </Grid>
+    </ScrollView>
 </pages:BasePage>

@@ -32,15 +32,15 @@ Checklist from the spec's phases. Ticked items are done, built for Android and W
 - [x] Tests: stats and time filters
 
 ## Phase 4 — Home, backup, polish
-- [ ] Home: resume, new game, top 3, last 5, pending payments, backup reminder
-- [ ] Recovery screen (offers backup import) and "closed unexpectedly" prompt on next launch
-- [ ] Export (FileSaver), share backup, import with validation/summary/confirm/snapshot, clear all data
-- [ ] Themes, app icon, splash, empty states, accessibility, adaptive layouts, window sizing
-- [ ] Performance: 40 players / 2,000 games board < 100 ms test; demo database (Debug only)
-- [ ] Tests: import/export round-trip and rejection; ViewModel integration test
-- [ ] Scripts: run on Windows, signed release APK, self-contained Windows publish
-- [ ] README and CLAUDE.md
+- [x] Home: resume, new game, top 3, last 5, pending payments, backup reminder
+- [x] Recovery screen (offers backup import) and "closed unexpectedly" prompt on next launch
+- [x] Export (FileSaver), share backup, import with validation/summary/confirm/snapshot, clear all data
+- [x] Themes, app icon, splash, empty states, accessibility, adaptive layouts, window sizing
+- [x] Performance: 40 players / 2,000 games board < 100 ms test; demo database (Debug only)
+- [x] Tests: import/export round-trip and rejection; ViewModel integration test
+- [x] Scripts: run on Windows, signed release APK, self-contained Windows publish
+- [x] README and CLAUDE.md
 
 ## Phase 5 — Optional
-- [ ] Merge duplicate players
-- [ ] "Pay via UPI" deep link on Android (with "Copy UPI ID" fallback)
+- [x] Merge duplicate players
+- [x] "Pay via UPI" deep link on Android (with "Copy UPI ID" fallback)

@@ -7,6 +7,10 @@
                 x:Class="PokerSettle.App.Pages.SettingsPage"
                 x:DataType="vm:SettingsViewModel"
                 Title="Settings">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="New game" Command="{Binding NewGameCommand}" Order="Primary" />
+    </ContentPage.ToolbarItems>
+
     <ContentPage.Resources>
         <toolkit:IsStringNotNullOrEmptyConverter x:Key="HasText" />
     </ContentPage.Resources>
@@ -73,6 +77,26 @@
                         <Switch Grid.Column="1" IsToggled="{Binding KeepScreenOn}" VerticalOptions="Center"
                                 SemanticProperties.Description="Keep screen on during games" />
                     </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Data -->
+            <Label Text="Your data" Style="{StaticResource SectionTitle}" />
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Everything is stored only on this device. Uninstalling the app deletes it, so export a backup now and then."
+                           Style="{StaticResource Caption}" />
+                    <Label Text="{Binding BackupSummary}" Style="{StaticResource Secondary}" />
+                    <FlexLayout Wrap="Wrap">
+                        <Button Text="Export backup" Command="{Binding ExportCommand}" Margin="0,0,8,8"
+                                SemanticProperties.Hint="Saves poker-settle-backup with today's date as a .json file" />
+                        <Button Text="Share backup" Style="{StaticResource OutlineButton}" Command="{Binding ShareBackupCommand}" Margin="0,0,8,8"
+                                SemanticProperties.Hint="Send the backup file to Drive, WhatsApp or email" />
+                        <Button Text="Import backup" Style="{StaticResource OutlineButton}" Command="{Binding ImportCommand}" Margin="0,0,8,8"
+                                SemanticProperties.Hint="Replaces all data after you confirm; a safety copy is kept" />
+                    </FlexLayout>
+                    <Button Text="Clear all data" Style="{StaticResource DangerButton}" Command="{Binding ClearAllCommand}" HorizontalOptions="Start"
+                            SemanticProperties.Hint="Deletes every player and game after you type DELETE" />
                 </VerticalStackLayout>
             </Border>
 

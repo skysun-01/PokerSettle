@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
                 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                 xmlns:pages="clr-namespace:PokerSettle.App.Pages"
@@ -14,22 +14,20 @@
     <ContentPage.Resources>
         <!-- Wide windows: one table row per player. Columns match the header grid below. -->
         <DataTemplate x:Key="RowTemplate" x:DataType="vm:BoardItem">
-            <Grid ColumnDefinitions="44,2*,100,92,92,60,64,92,92,92,104" ColumnSpacing="8" Padding="8,10" MinimumHeightRequest="52">
+            <Grid ColumnDefinitions="44,32,2*,100,92,92,60,64,92,92,92,104" ColumnSpacing="8" Padding="8,10" MinimumHeightRequest="52">
                 <Label Text="{Binding RankText}" Style="{StaticResource Caption}" VerticalOptions="Center" />
-                <HorizontalStackLayout Grid.Column="1" Spacing="10">
-                    <controls:AvatarView Initials="{Binding Initials}" ColorHex="{Binding Color}" Size="32" VerticalOptions="Center" />
-                    <Label Text="{Binding Name}" Style="{StaticResource Strong}" VerticalOptions="Center" LineBreakMode="TailTruncation" />
-                </HorizontalStackLayout>
-                <controls:SignedLabel Grid.Column="2" Text="{Binding NetText}" Sign="{Binding NetSign}" HorizontalTextAlignment="End" VerticalOptions="Center" />
-                <Label Grid.Column="3" Text="{Binding WonText}" HorizontalTextAlignment="End" VerticalOptions="Center" FontSize="15" />
-                <Label Grid.Column="4" Text="{Binding LostText}" HorizontalTextAlignment="End" VerticalOptions="Center" FontSize="15" />
-                <Label Grid.Column="5" Text="{Binding GamesText}" HorizontalTextAlignment="End" VerticalOptions="Center" FontSize="15" />
-                <Label Grid.Column="6" Text="{Binding WinRateText}" HorizontalTextAlignment="End" VerticalOptions="Center" FontSize="15" />
-                <controls:SignedLabel Grid.Column="7" Text="{Binding AverageText}" Sign="{Binding AverageSign}" HorizontalTextAlignment="End" VerticalOptions="Center" FontSize="15" />
-                <Label Grid.Column="8" Text="{Binding BestText}" HorizontalTextAlignment="End" VerticalOptions="Center" FontSize="15" />
-                <Label Grid.Column="9" Text="{Binding WorstText}" HorizontalTextAlignment="End" VerticalOptions="Center" FontSize="15" />
-                <Label Grid.Column="10" Text="{Binding LastPlayedText}" HorizontalTextAlignment="End" VerticalOptions="Center" FontSize="15" Style="{StaticResource Secondary}" />
-                <Button Grid.ColumnSpan="11" Style="{StaticResource RowButton}" Command="{Binding OpenCommand}" CommandParameter="{Binding .}"
+                <controls:AvatarView Grid.Column="1" Initials="{Binding Initials}" ColorHex="{Binding Color}" Size="32" VerticalOptions="Center" />
+                <Label Grid.Column="2" Text="{Binding Name}" Style="{StaticResource Strong}" VerticalOptions="Center" LineBreakMode="TailTruncation" />
+                <controls:SignedLabel Grid.Column="3" Text="{Binding NetText}" Sign="{Binding NetSign}" HorizontalTextAlignment="End" VerticalOptions="Center" />
+                <Label Grid.Column="4" Text="{Binding WonText}" HorizontalTextAlignment="End" VerticalOptions="Center" FontSize="15" />
+                <Label Grid.Column="5" Text="{Binding LostText}" HorizontalTextAlignment="End" VerticalOptions="Center" FontSize="15" />
+                <Label Grid.Column="6" Text="{Binding GamesText}" HorizontalTextAlignment="End" VerticalOptions="Center" FontSize="15" />
+                <Label Grid.Column="7" Text="{Binding WinRateText}" HorizontalTextAlignment="End" VerticalOptions="Center" FontSize="15" />
+                <controls:SignedLabel Grid.Column="8" Text="{Binding AverageText}" Sign="{Binding AverageSign}" HorizontalTextAlignment="End" VerticalOptions="Center" FontSize="15" />
+                <Label Grid.Column="9" Text="{Binding BestText}" HorizontalTextAlignment="End" VerticalOptions="Center" FontSize="15" />
+                <Label Grid.Column="10" Text="{Binding WorstText}" HorizontalTextAlignment="End" VerticalOptions="Center" FontSize="15" />
+                <Label Grid.Column="11" Text="{Binding LastPlayedText}" HorizontalTextAlignment="End" VerticalOptions="Center" FontSize="15" Style="{StaticResource Secondary}" />
+                <Button Grid.ColumnSpan="12" Style="{StaticResource RowButton}" Command="{Binding OpenCommand}" CommandParameter="{Binding .}"
                         SemanticProperties.Description="{Binding Description}" />
             </Grid>
         </DataTemplate>
@@ -100,18 +98,18 @@
         </HorizontalStackLayout>
 
         <!-- Wide: sortable column headers -->
-        <Grid x:Name="TableHeader" Grid.Row="2" ColumnDefinitions="44,2*,100,92,92,60,64,92,92,92,104" ColumnSpacing="8" Padding="8,0">
+        <Grid x:Name="TableHeader" Grid.Row="2" ColumnDefinitions="44,32,2*,100,92,92,60,64,92,92,92,104" ColumnSpacing="8" Padding="8,0">
             <Label Text="#" Style="{StaticResource Caption}" VerticalOptions="Center" />
-            <Button Grid.Column="1" Text="{Binding NameHeader}" Command="{Binding SortByCommand}" CommandParameter="Name" Style="{StaticResource TextButton}" FontSize="14" HorizontalOptions="Start" Padding="0" SemanticProperties.Description="Sort by name" />
-            <Button Grid.Column="2" Text="{Binding NetHeader}" Command="{Binding SortByCommand}" CommandParameter="Net" Style="{StaticResource TextButton}" FontSize="14" HorizontalOptions="End" Padding="0" SemanticProperties.Description="Sort by net total" />
-            <Button Grid.Column="3" Text="{Binding WonHeader}" Command="{Binding SortByCommand}" CommandParameter="Won" Style="{StaticResource TextButton}" FontSize="14" HorizontalOptions="End" Padding="0" SemanticProperties.Description="Sort by total won" />
-            <Button Grid.Column="4" Text="{Binding LostHeader}" Command="{Binding SortByCommand}" CommandParameter="Lost" Style="{StaticResource TextButton}" FontSize="14" HorizontalOptions="End" Padding="0" SemanticProperties.Description="Sort by total lost" />
-            <Button Grid.Column="5" Text="{Binding GamesHeader}" Command="{Binding SortByCommand}" CommandParameter="Games" Style="{StaticResource TextButton}" FontSize="14" HorizontalOptions="End" Padding="0" SemanticProperties.Description="Sort by games played" />
-            <Button Grid.Column="6" Text="{Binding WinRateHeader}" Command="{Binding SortByCommand}" CommandParameter="WinRate" Style="{StaticResource TextButton}" FontSize="14" HorizontalOptions="End" Padding="0" SemanticProperties.Description="Sort by win rate" />
-            <Button Grid.Column="7" Text="{Binding AverageHeader}" Command="{Binding SortByCommand}" CommandParameter="Average" Style="{StaticResource TextButton}" FontSize="14" HorizontalOptions="End" Padding="0" SemanticProperties.Description="Sort by average per game" />
-            <Button Grid.Column="8" Text="{Binding BestHeader}" Command="{Binding SortByCommand}" CommandParameter="BiggestWin" Style="{StaticResource TextButton}" FontSize="14" HorizontalOptions="End" Padding="0" SemanticProperties.Description="Sort by biggest win" />
-            <Button Grid.Column="9" Text="{Binding WorstHeader}" Command="{Binding SortByCommand}" CommandParameter="BiggestLoss" Style="{StaticResource TextButton}" FontSize="14" HorizontalOptions="End" Padding="0" SemanticProperties.Description="Sort by biggest loss" />
-            <Button Grid.Column="10" Text="{Binding LastHeader}" Command="{Binding SortByCommand}" CommandParameter="LastPlayed" Style="{StaticResource TextButton}" FontSize="14" HorizontalOptions="End" Padding="0" SemanticProperties.Description="Sort by last played" />
+            <Button Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding NameHeader}" Command="{Binding SortByCommand}" CommandParameter="Name" Style="{StaticResource TextButton}" FontSize="14" HorizontalOptions="Start" Padding="0" SemanticProperties.Description="Sort by name" />
+            <Button Grid.Column="3" Text="{Binding NetHeader}" Command="{Binding SortByCommand}" CommandParameter="Net" Style="{StaticResource TextButton}" FontSize="14" HorizontalOptions="End" Padding="0" SemanticProperties.Description="Sort by net total" />
+            <Button Grid.Column="4" Text="{Binding WonHeader}" Command="{Binding SortByCommand}" CommandParameter="Won" Style="{StaticResource TextButton}" FontSize="14" HorizontalOptions="End" Padding="0" SemanticProperties.Description="Sort by total won" />
+            <Button Grid.Column="5" Text="{Binding LostHeader}" Command="{Binding SortByCommand}" CommandParameter="Lost" Style="{StaticResource TextButton}" FontSize="14" HorizontalOptions="End" Padding="0" SemanticProperties.Description="Sort by total lost" />
+            <Button Grid.Column="6" Text="{Binding GamesHeader}" Command="{Binding SortByCommand}" CommandParameter="Games" Style="{StaticResource TextButton}" FontSize="14" HorizontalOptions="End" Padding="0" SemanticProperties.Description="Sort by games played" />
+            <Button Grid.Column="7" Text="{Binding WinRateHeader}" Command="{Binding SortByCommand}" CommandParameter="WinRate" Style="{StaticResource TextButton}" FontSize="14" HorizontalOptions="End" Padding="0" SemanticProperties.Description="Sort by win rate" />
+            <Button Grid.Column="8" Text="{Binding AverageHeader}" Command="{Binding SortByCommand}" CommandParameter="Average" Style="{StaticResource TextButton}" FontSize="14" HorizontalOptions="End" Padding="0" SemanticProperties.Description="Sort by average per game" />
+            <Button Grid.Column="9" Text="{Binding BestHeader}" Command="{Binding SortByCommand}" CommandParameter="BiggestWin" Style="{StaticResource TextButton}" FontSize="14" HorizontalOptions="End" Padding="0" SemanticProperties.Description="Sort by biggest win" />
+            <Button Grid.Column="10" Text="{Binding WorstHeader}" Command="{Binding SortByCommand}" CommandParameter="BiggestLoss" Style="{StaticResource TextButton}" FontSize="14" HorizontalOptions="End" Padding="0" SemanticProperties.Description="Sort by biggest loss" />
+            <Button Grid.Column="11" Text="{Binding LastHeader}" Command="{Binding SortByCommand}" CommandParameter="LastPlayed" Style="{StaticResource TextButton}" FontSize="14" HorizontalOptions="End" Padding="0" SemanticProperties.Description="Sort by last played" />
         </Grid>
 
         <CollectionView x:Name="BoardList" Grid.Row="3" ItemsSource="{Binding Rows}" SelectionMode="None"

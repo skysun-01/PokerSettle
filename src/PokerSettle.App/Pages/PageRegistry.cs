@@ -16,6 +16,7 @@ public static class PageRegistry
 
         // Pushed pages: a fresh page and ViewModel per navigation.
         services.AddTransient<LogsPage>();
+        services.AddTransient<RecoveryPage>();
         services.AddTransient<PlayerEditPage>();
         services.AddTransient<PlayerDetailPage>();
         services.AddTransient<NewGamePage>();
@@ -30,6 +31,7 @@ public static class PageRegistry
     public static void RegisterRoutes()
     {
         Routing.RegisterRoute(Routes.Logs, typeof(LogsPage));
+        Routing.RegisterRoute(Routes.Recovery, typeof(RecoveryPage));
         Routing.RegisterRoute(Routes.PlayerEdit, typeof(PlayerEditPage));
         Routing.RegisterRoute(Routes.PlayerDetail, typeof(PlayerDetailPage));
         Routing.RegisterRoute(Routes.NewGame, typeof(NewGamePage));

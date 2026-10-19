@@ -27,6 +27,9 @@ public sealed partial class AppState : ObservableObject
     /// <summary>The "closed unexpectedly" prompt was answered or dismissed this session.</summary>
     public bool CrashPromptHandled { get; set; }
 
+    /// <summary>The recovery screen has been shown this session (it's shown once).</summary>
+    public bool RecoveryShown { get; set; }
+
     public bool ShowCrashPrompt => CrashMarker.PreviousSessionCrashed && !CrashPromptHandled;
 
     public RecoveryInfo? Recovery => _data.Recovery;
