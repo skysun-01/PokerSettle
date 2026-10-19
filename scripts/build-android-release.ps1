@@ -26,7 +26,10 @@ if (-not (Test-Path $KeystorePath)) {
     exit 1
 }
 
+# Password: environment variable, else keystore-password.txt next to the keystore, else ask.
 $password = $env:POKERSETTLE_KEYSTORE_PASSWORD
+$passwordFile = Join-Path (Split-Path -Parent $KeystorePath) "keystore-password.txt"
+if (-not $password -and (Test-Path $passwordFile)) { $password = (Get-Content $passwordFile -Raw).Trim() }
 if (-not $password) { $password = Read-PlainPassword "Keystore password" }
 
 $env:PS_SIGNING_PASS = $password

@@ -7,10 +7,15 @@
   repository by default and is never committed (*.keystore and *.jks are in .gitignore).
 .EXAMPLE
   powershell -ExecutionPolicy Bypass -File scripts\create-keystore.ps1
+.EXAMPLE
+  # No prompts: generates a strong password and saves it in keystore-password.txt next to the keystore,
+  # where build-android-release.ps1 picks it up.
+  powershell -ExecutionPolicy Bypass -File scripts\create-keystore.ps1 -GeneratePassword
 #>
 param(
     [string]$KeystorePath = "$env:USERPROFILE\.pokersettle\poker-settle.keystore",
-    [string]$Alias = "pokersettle"
+    [string]$Alias = "pokersettle",
+    [switch]$GeneratePassword
 )
 
 $ErrorActionPreference = "Stop"
@@ -22,10 +27,19 @@ if (Test-Path $KeystorePath) {
 }
 
 $keytool = Find-Keytool
-$password = Read-PlainPassword "Choose a keystore password (at least 6 characters)"
-$confirm = Read-PlainPassword "Type it again"
-if ($password -ne $confirm) { throw "The passwords don't match." }
-if ($password.Length -lt 6) { throw "Use at least 6 characters." }
+$passwordFile = Join-Path (Split-Path -Parent $KeystorePath) "keystore-password.txt"
+if ($GeneratePassword) {
+    $chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789"
+    $bytes = New-Object byte[] 24
+    [Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($bytes)
+    $password = -join ($bytes | ForEach-Object { $chars[$_ % $chars.Length] })
+}
+else {
+    $password = Read-PlainPassword "Choose a keystore password (at least 6 characters)"
+    $confirm = Read-PlainPassword "Type it again"
+    if ($password -ne $confirm) { throw "The passwords don't match." }
+    if ($password.Length -lt 6) { throw "Use at least 6 characters." }
+}
 
 New-Item -ItemType Directory -Force (Split-Path -Parent $KeystorePath) | Out-Null
 $env:PS_KEYSTORE_PASS = $password
@@ -36,6 +50,11 @@ try {
 }
 finally {
     Remove-Item Env:PS_KEYSTORE_PASS -ErrorAction SilentlyContinue
+}
+
+if ($GeneratePassword) {
+    Set-Content -Path $passwordFile -Value $password -Encoding Ascii -NoNewline
+    Write-Host "Generated password saved to $passwordFile (build-android-release.ps1 reads it from there)."
 }
 
 Write-Host ""

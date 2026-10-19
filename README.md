@@ -46,7 +46,9 @@ The app runs *unpackaged* (a plain .exe), so it keeps its data in the same folde
 powershell -ExecutionPolicy Bypass -File scripts\create-keystore.ps1
 ```
 
-This creates `%USERPROFILE%\.pokersettle\poker-settle.keystore` and asks for a password. **Keep the file and the password safe** (e.g. a password manager plus a copy on a USB drive). Every future version must be signed with the same key, or your phone won't accept it as an update. The keystore is never committed: `*.keystore`, `*.jks` and `signing/` are in `.gitignore`.
+This creates `%USERPROFILE%\.pokersettle\poker-settle.keystore` and asks for a password. Add `-GeneratePassword` to skip the prompts: a strong password is generated and saved as `keystore-password.txt` next to the keystore, and the build script reads it from there.
+
+**Your key already exists:** it was created on 19 Oct 2026 with `-GeneratePassword`, so the folder `%USERPROFILE%\.pokersettle\` holds both `poker-settle.keystore` and `keystore-password.txt`. **Back up that whole folder** (e.g. to a USB drive or a password manager). Every future version must be signed with this same key, or your phone won't accept it as an update. Don't run `create-keystore.ps1` again. The keystore is never committed: `*.keystore`, `*.jks` and `signing/` are in `.gitignore`, and the folder is outside the repository anyway.
 
 ### 2. Build the APK
 
@@ -54,7 +56,7 @@ This creates `%USERPROFILE%\.pokersettle\poker-settle.keystore` and asks for a p
 powershell -ExecutionPolicy Bypass -File scripts\build-android-release.ps1
 ```
 
-It asks for the keystore password (or reads `POKERSETTLE_KEYSTORE_PASSWORD`), builds `artifacts\PokerSettle-1.0.0.apk`, and checks it: the signature, that it does **not** request internet access, and that its native libraries support 16 KB memory pages (needed on newer phones).
+It takes the keystore password from `POKERSETTLE_KEYSTORE_PASSWORD`, else from `keystore-password.txt` next to the keystore, else asks. It builds `artifacts\PokerSettle-1.0.0.apk` (about 42 MB; runs on 64-bit and 32-bit ARM phones) and checks it: the signature, that it does **not** request internet access, and that its native libraries support 16 KB memory pages (needed on newer phones).
 
 ### 3. Put it on the phone (pick one)
 
@@ -157,4 +159,4 @@ Choices made where the spec left room:
 19. **Accessibility:** list rows are full-row buttons (not tap gestures), so they work with the keyboard on Windows and with screen readers; amounts never rely on color alone.
 20. **Do not change** `<Company>`, `<AssemblyName>`, `<ApplicationId>` or `<WindowsPackageType>`: they determine where the Windows data lives and whether Android treats a build as the same app.
 21. **Developer switches** (Debug builds only): `POKERSETTLE_DATA_DIR` and `POKERSETTLE_DEBUG_LOG` let a second copy run against scratch data.
-22. **Android minimum** is Android 6.0 (API 23).
+22. **Android minimum** is Android 6.0 (API 23). The release APK includes 64-bit ARM, 32-bit ARM (budget phones on 32-bit Android Go) and x86_64 (emulators, Chromebooks).

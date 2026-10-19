@@ -37,6 +37,8 @@
 	<PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android' and '$(Configuration)' == 'Release'">
 		<AndroidPackageFormat>apk</AndroidPackageFormat>
 		<AndroidLinkTool>r8</AndroidLinkTool>
+		<!-- 64-bit phones, plus 32-bit ARM for budget phones running 32-bit Android (e.g. Android Go). -->
+		<RuntimeIdentifiers>android-arm64;android-arm;android-x64</RuntimeIdentifiers>
 	</PropertyGroup>
 
 	<ItemGroup>
