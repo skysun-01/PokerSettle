@@ -14,7 +14,11 @@ $project = Join-Path $root "src\PokerSettle.App\PokerSettle.App.csproj"
 $output = Join-Path $root "artifacts\windows"
 
 if (Test-Path $output) { Remove-Item $output -Recurse -Force }
-dotnet publish $project -f net10.0-windows10.0.19041.0 -c Release -r $Runtime --self-contained true -nologo `
+# RuntimeIdentifierOverride (not -r): the project also targets Android, and a global -r would make
+# restore look for a Windows runtime for the Android target too.
+dotnet publish $project -f net10.0-windows10.0.19041.0 -c Release -nologo `
+    "-p:RuntimeIdentifierOverride=$Runtime" `
+    -p:SelfContained=true `
     -p:WindowsPackageType=None `
     -p:WindowsAppSDKSelfContained=true `
     -p:PublishReadyToRun=true `

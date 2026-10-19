@@ -147,7 +147,9 @@ public sealed partial class HomeViewModel : ViewModelBase
         ShowBackupReminder = home.GamesSinceBackup > 0;
         BackupReminderText = Settings.LastBackupAt is { } last
             ? $"{Plural(home.GamesSinceBackup, "game")} finished since your last backup ({Money.FormatCompactDate(DateOnly.FromDateTime(last.LocalDateTime))})."
-            : $"{Plural(home.GamesSinceBackup, "finished game")} only on this device. A backup keeps them safe.";
+            : home.GamesSinceBackup == 1
+                ? "1 finished game is only on this device. A backup keeps it safe."
+                : $"{home.GamesSinceBackup} finished games are only on this device. A backup keeps them safe.";
     }
 
     [RelayCommand]
