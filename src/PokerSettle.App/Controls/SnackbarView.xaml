@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:services="clr-namespace:PokerSettle.Core.Services;assembly=PokerSettle.Core"
+             x:Class="PokerSettle.App.Controls.SnackbarView"
+             x:DataType="services:SnackbarService"
+             IsVisible="{Binding IsVisible}"
+             VerticalOptions="End"
+             HorizontalOptions="Fill"
+             MaximumWidthRequest="600"
+             Margin="12,0,12,12">
+    <Border x:Name="Card"
+            StrokeThickness="0"
+            StrokeShape="RoundRectangle 12"
+            Padding="16,4,6,4"
+            MinimumHeightRequest="52"
+            BackgroundColor="{AppThemeBinding Light={StaticResource SnackbarLight}, Dark={StaticResource SnackbarDark}}">
+        <Border.Triggers>
+            <DataTrigger TargetType="Border" Binding="{Binding IsError}" Value="True">
+                <Setter Property="BackgroundColor" Value="{StaticResource ErrorSnackbar}" />
+            </DataTrigger>
+        </Border.Triggers>
+        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+            <Label Text="{Binding Message}"
+                   VerticalOptions="Center"
+                   FontSize="15"
+                   TextColor="{AppThemeBinding Light={StaticResource SnackbarTextLight}, Dark={StaticResource SnackbarTextDark}}">
+                <Label.Triggers>
+                    <DataTrigger TargetType="Label" Binding="{Binding IsError}" Value="True">
+                        <Setter Property="TextColor" Value="{StaticResource White}" />
+                    </DataTrigger>
+                </Label.Triggers>
+            </Label>
+            <Button Grid.Column="1"
+                    Text="{Binding ActionText}"
+                    IsVisible="{Binding HasAction}"
+                    Command="{Binding RunActionCommand}"
+                    Style="{StaticResource TextButton}"
+                    FontSize="15"
+                    TextColor="{AppThemeBinding Light={StaticResource SnackbarActionLight}, Dark={StaticResource SnackbarActionDark}}"
+                    SemanticProperties.Hint="Reverses the last action" />
+        </Grid>
+    </Border>
+</ContentView>

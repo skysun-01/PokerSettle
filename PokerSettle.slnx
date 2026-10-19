@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/PokerSettle.App/PokerSettle.App.csproj" />
+    <Project Path="src/PokerSettle.Core/PokerSettle.Core.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/PokerSettle.Tests/PokerSettle.Tests.csproj" />
+  </Folder>
+</Solution>

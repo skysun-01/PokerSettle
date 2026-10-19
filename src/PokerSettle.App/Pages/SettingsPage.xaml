@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+                xmlns:pages="clr-namespace:PokerSettle.App.Pages"
+                xmlns:vm="clr-namespace:PokerSettle.Core.ViewModels.Settings;assembly=PokerSettle.Core"
+                x:Class="PokerSettle.App.Pages.SettingsPage"
+                x:DataType="vm:SettingsViewModel"
+                Title="Settings">
+    <ContentPage.Resources>
+        <toolkit:IsStringNotNullOrEmptyConverter x:Key="HasText" />
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16,8,16,96" Spacing="4" MaximumWidthRequest="760">
+            <Label Text="Settings" Style="{StaticResource Heading}" Margin="4,8,4,0" />
+
+            <!-- Money -->
+            <Label Text="Money" Style="{StaticResource SectionTitle}" />
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Currency" Style="{StaticResource Secondary}" />
+                    <Picker ItemsSource="{Binding CurrencyLabels}" SelectedIndex="{Binding CurrencyIndex}"
+                            SemanticProperties.Description="Currency" />
+                    <Label Text="Number format" Style="{StaticResource Secondary}" />
+                    <Picker ItemsSource="{Binding CultureLabels}" SelectedIndex="{Binding CultureIndex}"
+                            SemanticProperties.Description="Number format" />
+                    <Label Text="{Binding FormatPreview}" Style="{StaticResource Secondary}"
+                           SemanticProperties.Description="Example of how amounts will look" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- New game defaults -->
+            <Label Text="New game defaults" Style="{StaticResource SectionTitle}" />
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Default buy-in" Style="{StaticResource Secondary}" />
+                    <Entry Text="{Binding DefaultBuyInText}"
+                           Keyboard="Numeric"
+                           ReturnType="Done"
+                           ReturnCommand="{Binding SaveDefaultBuyInCommand}"
+                           SemanticProperties.Description="Default buy-in amount">
+                        <Entry.Behaviors>
+                            <toolkit:SelectAllTextBehavior />
+                            <toolkit:EventToCommandBehavior EventName="Unfocused" Command="{Binding SaveDefaultBuyInCommand}" />
+                        </Entry.Behaviors>
+                    </Entry>
+                    <Label Text="{Binding DefaultBuyInError}" Style="{StaticResource ErrorText}"
+                           IsVisible="{Binding DefaultBuyInError, Converter={StaticResource HasText}}" />
+                    <Label Text="New games start with the buy-in from your last game; this is used for the very first one."
+                           Style="{StaticResource Caption}" />
+                    <Label Text="Settlement" Style="{StaticResource Secondary}" Margin="0,8,0,0" />
+                    <Picker ItemsSource="{Binding SettlementOptionsList}" SelectedIndex="{Binding SettlementIndex}"
+                            SemanticProperties.Description="Default settlement mode" />
+                    <Label Text="Rounding of payments" Style="{StaticResource Secondary}" />
+                    <Picker ItemsSource="{Binding RoundingOptions}" SelectedIndex="{Binding RoundingIndex}"
+                            SemanticProperties.Description="Default rounding of payments" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Appearance -->
+            <Label Text="Appearance" Style="{StaticResource SectionTitle}" />
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Theme" Style="{StaticResource Secondary}" />
+                    <Picker ItemsSource="{Binding ThemeOptions}" SelectedIndex="{Binding ThemeIndex}"
+                            SemanticProperties.Description="Theme" />
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                        <VerticalStackLayout VerticalOptions="Center">
+                            <Label Text="Keep screen on during games" />
+                            <Label Text="The screen won't sleep while a game is in progress." Style="{StaticResource Caption}" />
+                        </VerticalStackLayout>
+                        <Switch Grid.Column="1" IsToggled="{Binding KeepScreenOn}" VerticalOptions="Center"
+                                SemanticProperties.Description="Keep screen on during games" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Troubleshooting -->
+            <Label Text="Troubleshooting" Style="{StaticResource SectionTitle}" />
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="10">
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                        <VerticalStackLayout VerticalOptions="Center">
+                            <Label Text="Debug logging" />
+                            <Label Text="Off by default. When on, the app keeps a small local log (never phone numbers or UPI IDs)."
+                                   Style="{StaticResource Caption}" />
+                        </VerticalStackLayout>
+                        <Switch Grid.Column="1" IsToggled="{Binding DebugLogging}" VerticalOptions="Center"
+                                SemanticProperties.Description="Debug logging" />
+                    </Grid>
+                    <Button Text="View logs" Style="{StaticResource OutlineButton}" Command="{Binding OpenLogsCommand}"
+                            IsVisible="{Binding DebugLogging}" HorizontalOptions="Start" />
+                    <Button Text="Copy debug report" Style="{StaticResource OutlineButton}" Command="{Binding CopyDebugReportCommand}"
+                            HorizontalOptions="Start"
+                            SemanticProperties.Hint="Copies app version, device, settings, data counts and recent log entries" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Developer (Debug builds only) -->
+            <VerticalStackLayout IsVisible="{Binding IsDeveloperVisible}" Spacing="4">
+                <Label Text="Developer" Style="{StaticResource SectionTitle}" />
+                <Border Style="{StaticResource Card}">
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                        <VerticalStackLayout VerticalOptions="Center">
+                            <Label Text="Use demo database" />
+                            <Label Text="Switches to a separate file with 40 players and 2,000 games. Your real data is not touched."
+                                   Style="{StaticResource Caption}" />
+                        </VerticalStackLayout>
+                        <Switch Grid.Column="1" IsToggled="{Binding UseDemoDatabase}" VerticalOptions="Center"
+                                SemanticProperties.Description="Use demo database" />
+                    </Grid>
+                </Border>
+            </VerticalStackLayout>
+
+            <!-- About -->
+            <Label Text="About" Style="{StaticResource SectionTitle}" />
+            <Border Style="{StaticResource Card}">
+                <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto" ColumnSpacing="16" RowSpacing="8">
+                    <Label Text="App version" Style="{StaticResource Secondary}" />
+                    <Label Grid.Column="1" Text="{Binding AppVersionText}" />
+                    <Label Grid.Row="1" Text="Schema version" Style="{StaticResource Secondary}" />
+                    <Label Grid.Row="1" Grid.Column="1" Text="{Binding SchemaVersionText}" />
+                    <Label Grid.Row="2" Text="Database" Style="{StaticResource Secondary}" />
+                    <Label Grid.Row="2" Grid.Column="1" Text="{Binding DatabasePath}" FontSize="14" LineBreakMode="CharacterWrap" />
+                    <Label Grid.Row="3" Text="Size" Style="{StaticResource Secondary}" />
+                    <Label Grid.Row="3" Grid.Column="1" Text="{Binding DatabaseSizeText}" />
+                    <Label Grid.Row="4" Text="Data" Style="{StaticResource Secondary}" />
+                    <Label Grid.Row="4" Grid.Column="1" Text="{Binding DataSummary}" FontSize="14" />
+                </Grid>
+            </Border>
+        </VerticalStackLayout>
+    </ScrollView>
+</pages:BasePage>

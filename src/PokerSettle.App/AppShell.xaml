@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell x:Class="PokerSettle.App.AppShell"
+       xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+       xmlns:pages="clr-namespace:PokerSettle.App.Pages"
+       Shell.FlyoutBehavior="Disabled"
+       Title="Poker Settle">
+
+    <!-- Tab pages are created on demand (ContentTemplate) and resolved from DI. -->
+    <TabBar>
+        <ShellContent Title="Home" Icon="tab_home.png" Route="home"
+                      ContentTemplate="{DataTemplate pages:HomePage}" />
+        <ShellContent Title="Games" Icon="tab_games.png" Route="games"
+                      ContentTemplate="{DataTemplate pages:GamesPage}" />
+        <ShellContent Title="Board" Icon="tab_board.png" Route="board"
+                      ContentTemplate="{DataTemplate pages:BoardPage}" />
+        <ShellContent Title="Players" Icon="tab_players.png" Route="players"
+                      ContentTemplate="{DataTemplate pages:PlayersPage}" />
+        <ShellContent Title="Settings" Icon="tab_settings.png" Route="settings"
+                      ContentTemplate="{DataTemplate pages:SettingsPage}" />
+    </TabBar>
+</Shell>

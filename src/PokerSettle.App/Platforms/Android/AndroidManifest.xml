@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+	<!-- All data stays on the device: no cloud backup and no INTERNET permission
+	     (Debug builds get INTERNET added automatically for the debugger; Release does not). -->
+	<application android:allowBackup="false" android:icon="@mipmap/appicon" android:roundIcon="@mipmap/appicon_round" android:supportsRtl="true"></application>
+	<!-- Light haptic on buy-in. Normal permission, no prompt. -->
+	<uses-permission android:name="android.permission.VIBRATE" />
+	<!-- Picking a backup file to import on Android 12 and older. -->
+	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+	<!-- Saving a backup with the system save dialog on Android 9 and older. -->
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
+	<queries>
+		<!-- "Pay via UPI": lets the app see whether a UPI app can handle upi:// links (Android 11+). -->
+		<intent>
+			<action android:name="android.intent.action.VIEW" />
+			<data android:scheme="upi" />
+		</intent>
+	</queries>
+</manifest>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+  <!-- Podium -->
+  <path d="M9 7 H15 V21 H9 Z" fill="#000000" />
+  <path d="M2.5 11 H8 V21 H2.5 Z" fill="#000000" />
+  <path d="M16 14 H21.5 V21 H16 Z" fill="#000000" />
+  <path d="M12 1.8 L12.9 3.6 L14.9 3.9 L13.45 5.3 L13.8 7.3 L12 6.35 L10.2 7.3 L10.55 5.3 L9.1 3.9 L11.1 3.6 Z" fill="#000000" transform="translate(0,-0.8)" />
+</svg>

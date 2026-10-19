@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Poker chip with a spade. Kept inside the adaptive-icon safe zone (centre 66%). -->
+<svg width="456" height="456" viewBox="0 0 456 456" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="228" cy="228" r="142" fill="#FFFFFF" />
+  <circle cx="228" cy="228" r="124" fill="none" stroke="#1E6B47" stroke-width="26" stroke-dasharray="48.69 48.69" />
+  <circle cx="228" cy="228" r="98" fill="#1E6B47" />
+  <circle cx="228" cy="228" r="90" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-dasharray="10 8" />
+  <path transform="translate(173,168) scale(1.1)"
+        d="M50 4 C38 22 6 38 6 61 C6 77 19 87 33 86 C41 85 46 81 48.5 76 L42 95 L58 95 L51.5 76 C54 81 59 85 67 86 C81 87 94 77 94 61 C94 38 62 22 50 4 Z"
+        fill="#FFFFFF" />
+</svg>

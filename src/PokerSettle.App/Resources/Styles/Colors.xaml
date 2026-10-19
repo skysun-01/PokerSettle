@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xaml-comp compile="true" ?>
+<!-- Palette. Every text/background pair is WCAG AA (4.5:1) or better in both themes. -->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <!-- Felt green accent -->
+    <Color x:Key="PrimaryLight">#1E6B47</Color>
+    <Color x:Key="PrimaryDark">#5CC98F</Color>
+    <Color x:Key="PrimaryPressedLight">#14523A</Color>
+    <Color x:Key="PrimaryPressedDark">#49B67C</Color>
+    <Color x:Key="OnPrimaryLight">#FFFFFF</Color>
+    <Color x:Key="OnPrimaryDark">#06150D</Color>
+
+    <!-- Surfaces -->
+    <Color x:Key="BackgroundLight">#F4F6F3</Color>
+    <Color x:Key="BackgroundDark">#0F1512</Color>
+    <Color x:Key="SurfaceLight">#FFFFFF</Color>
+    <Color x:Key="SurfaceDark">#18211C</Color>
+    <Color x:Key="SurfaceVariantLight">#E9EEEA</Color>
+    <Color x:Key="SurfaceVariantDark">#222D27</Color>
+    <Color x:Key="OutlineLight">#CBD5CE</Color>
+    <Color x:Key="OutlineDark">#34433A</Color>
+    <Color x:Key="OutlineStrongLight">#8A9890</Color>
+    <Color x:Key="OutlineStrongDark">#5E6E65</Color>
+
+    <!-- Text -->
+    <Color x:Key="TextLight">#17201B</Color>
+    <Color x:Key="TextDark">#E6ECE8</Color>
+    <Color x:Key="TextSecondaryLight">#4C5852</Color>
+    <Color x:Key="TextSecondaryDark">#A7B4AC</Color>
+
+    <!-- Results: always shown with a +/− sign too, never color alone -->
+    <Color x:Key="PositiveLight">#146C34</Color>
+    <Color x:Key="PositiveDark">#6BD99A</Color>
+    <Color x:Key="NegativeLight">#B3261E</Color>
+    <Color x:Key="NegativeDark">#FF8F86</Color>
+
+    <!-- Notices and badges -->
+    <Color x:Key="WarningBackgroundLight">#FFF1CC</Color>
+    <Color x:Key="WarningBackgroundDark">#3D2E00</Color>
+    <Color x:Key="WarningTextLight">#6B4500</Color>
+    <Color x:Key="WarningTextDark">#FFD978</Color>
+    <Color x:Key="BadgeProgressBackgroundLight">#DCEFE4</Color>
+    <Color x:Key="BadgeProgressBackgroundDark">#1D3B2B</Color>
+    <Color x:Key="BadgeProgressTextLight">#14523A</Color>
+    <Color x:Key="BadgeProgressTextDark">#8EE0B3</Color>
+    <Color x:Key="BadgeUnpaidBackgroundLight">#FFE7D6</Color>
+    <Color x:Key="BadgeUnpaidBackgroundDark">#47260F</Color>
+    <Color x:Key="BadgeUnpaidTextLight">#8A3B00</Color>
+    <Color x:Key="BadgeUnpaidTextDark">#FFB98A</Color>
+
+    <!-- Snackbar: inverse surface -->
+    <Color x:Key="SnackbarLight">#1F2A24</Color>
+    <Color x:Key="SnackbarDark">#E6ECE8</Color>
+    <Color x:Key="SnackbarTextLight">#F2F5F3</Color>
+    <Color x:Key="SnackbarTextDark">#17201B</Color>
+    <Color x:Key="SnackbarActionLight">#8EE0B3</Color>
+    <Color x:Key="SnackbarActionDark">#1E6B47</Color>
+    <Color x:Key="ErrorSnackbar">#8C1D18</Color>
+
+    <Color x:Key="DemoBanner">#FFB020</Color>
+    <Color x:Key="DemoBannerText">#2B1A00</Color>
+    <Color x:Key="White">#FFFFFF</Color>
+    <Color x:Key="Transparent">#00000000</Color>
+</ResourceDictionary>

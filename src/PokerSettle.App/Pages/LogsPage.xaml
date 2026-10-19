@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                xmlns:pages="clr-namespace:PokerSettle.App.Pages"
+                xmlns:vm="clr-namespace:PokerSettle.Core.ViewModels.Settings;assembly=PokerSettle.Core"
+                x:Class="PokerSettle.App.Pages.LogsPage"
+                x:DataType="vm:LogsViewModel"
+                Title="Logs">
+    <Grid RowDefinitions="Auto,Auto,*" Padding="16,8,16,0" RowSpacing="8">
+        <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+            <Picker ItemsSource="{Binding Levels}" SelectedIndex="{Binding LevelIndex}"
+                    SemanticProperties.Description="Filter by level" />
+            <SearchBar Grid.Column="1" Text="{Binding SearchText}" Placeholder="Search logs"
+                       SemanticProperties.Description="Search logs" />
+        </Grid>
+
+        <FlexLayout Grid.Row="1" Wrap="Wrap" AlignItems="Center">
+            <Label Text="{Binding Summary}" Style="{StaticResource Caption}" Margin="0,0,12,8" VerticalOptions="Center" />
+            <Button Text="Copy all" Style="{StaticResource ChipButton}" Command="{Binding CopyAllCommand}" />
+            <Button Text="Share log file" Style="{StaticResource ChipButton}" Command="{Binding ShareFileCommand}" />
+            <Button Text="Refresh" Style="{StaticResource ChipButton}" Command="{Binding RefreshCommand}" />
+            <Button Text="Clear" Style="{StaticResource ChipButton}" Command="{Binding ClearCommand}" />
+        </FlexLayout>
+
+        <CollectionView Grid.Row="2" ItemsSource="{Binding Entries}" SelectionMode="None">
+            <CollectionView.EmptyView>
+                <Label Text="No log entries match." Style="{StaticResource Secondary}" HorizontalTextAlignment="Center" Margin="0,32" />
+            </CollectionView.EmptyView>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="vm:LogItem">
+                    <Grid RowDefinitions="Auto,Auto,Auto" Padding="4,8" RowSpacing="2">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding ToggleCommand}" />
+                        </Grid.GestureRecognizers>
+                        <Label FontSize="12" Style="{StaticResource Caption}">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="{Binding Time}" />
+                                    <Span Text="  " />
+                                    <Span Text="{Binding Level}" FontFamily="OpenSansSemibold" />
+                                    <Span Text="  " />
+                                    <Span Text="{Binding Category}" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                        <Label Grid.Row="1" Text="{Binding Message}" FontSize="14">
+                            <Label.Triggers>
+                                <DataTrigger TargetType="Label" Binding="{Binding Severity}" Value="2">
+                                    <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource NegativeLight}, Dark={StaticResource NegativeDark}}" />
+                                </DataTrigger>
+                                <DataTrigger TargetType="Label" Binding="{Binding Severity}" Value="1">
+                                    <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource WarningTextLight}, Dark={StaticResource WarningTextDark}}" />
+                                </DataTrigger>
+                            </Label.Triggers>
+                        </Label>
+                        <Label Grid.Row="2" Text="{Binding DataText}" IsVisible="{Binding IsExpanded}"
+                               FontFamily="Consolas" FontSize="12" Style="{StaticResource Caption}" />
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</pages:BasePage>
