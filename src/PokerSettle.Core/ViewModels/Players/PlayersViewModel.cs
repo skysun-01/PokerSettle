@@ -135,5 +135,5 @@ public sealed partial class PlayersViewModel : ViewModelBase
 
     [RelayCommand]
     private Task OpenPlayerAsync(PlayerRow? row) => RunSafeAsync(() =>
-        row is null ? Task.CompletedTask : Navigation.GoToAsync(Routes.PlayerEdit, new Dictionary<string, object> { [Routes.PlayerId] = row.Id }));
+        row is null ? Task.CompletedTask : Navigation.GoToAsync(Routes.PlayerDetail, new Dictionary<string, object> { [Routes.PlayerId] = row.Id }));
 }

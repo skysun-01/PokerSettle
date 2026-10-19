@@ -171,6 +171,16 @@
         <Setter Property="Margin" Value="0,0,8,8" />
     </Style>
 
+    <!-- Transparent button laid over a whole list row: keyboard-focusable, Enter/Space and screen readers can open it. -->
+    <Style x:Key="RowButton" TargetType="Button">
+        <Setter Property="BackgroundColor" Value="{StaticResource Transparent}" />
+        <Setter Property="BorderWidth" Value="0" />
+        <Setter Property="CornerRadius" Value="10" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Text" Value="" />
+        <Setter Property="MinimumHeightRequest" Value="48" />
+    </Style>
+
     <Style x:Key="ChipButtonSelected" TargetType="Button" BasedOn="{StaticResource ChipButton}">
         <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource PrimaryLight}, Dark={StaticResource PrimaryDark}}" />
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource OnPrimaryLight}, Dark={StaticResource OnPrimaryDark}}" />

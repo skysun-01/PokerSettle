@@ -17,7 +17,7 @@ public class MoneyFormatterTests
     [InlineData(0, "₹0")]
     [InlineData(-50_000, "−₹500")]
     public void Formats_indian_grouping_and_hides_whole_decimals(long paise, string expected) =>
-        Assert.Equal(expected, Inr.Format(paise));
+        Assert.Equal(expected, Plain(Inr.Format(paise)));
 
     [Theory]
     [InlineData(125_000, "+₹1,250")]
@@ -25,11 +25,22 @@ public class MoneyFormatterTests
     [InlineData(0, "₹0")]
     [InlineData(12_500_050, "+₹1,25,000.50")]
     public void Signed_results_always_carry_a_sign(long paise, string expected) =>
-        Assert.Equal(expected, Inr.FormatSigned(paise));
+        Assert.Equal(expected, Plain(Inr.FormatSigned(paise)));
 
     [Fact]
-    public void Minus_is_the_unicode_minus_sign() =>
+    public void Minus_is_the_unicode_minus_sign_joined_to_the_amount()
+    {
         Assert.Equal('−', Inr.FormatSigned(-100)[0]);
+        // The invisible word joiner stops "−" and "₹" landing on different lines.
+        Assert.Equal(MoneyFormatter.Joiner, Inr.FormatSigned(-100)[1]);
+        Assert.Equal(MoneyFormatter.Joiner, Inr.FormatSigned(100)[1]);
+    }
+
+    [Fact]
+    public void Parser_accepts_text_produced_by_the_formatter() =>
+        Assert.Equal(125_000, MoneyParser.ParseMoney(Inr.Format(125_000), Inr).Value);
+
+    internal static string Plain(string text) => text.Replace(MoneyFormatter.Joiner.ToString(), "");
 
     [Fact]
     public void Uses_the_configured_culture_not_the_device_culture()
@@ -39,7 +50,7 @@ public class MoneyFormatterTests
         {
             CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de-DE");
             CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo("de-DE");
-            Assert.Equal("₹1,25,000.50", Inr.Format(12_500_050));
+            Assert.Equal("₹1,25,000.50", Plain(Inr.Format(12_500_050)));
         }
         finally
         {
@@ -54,7 +65,7 @@ public class MoneyFormatterTests
     [InlineData("en-GB", "£", -99, "−£0.99")]
     [InlineData("en-US", "AED", 125_000, "+AED 1,250")]
     public void Other_cultures_and_symbols(string culture, string symbol, long paise, string expected) =>
-        Assert.Equal(expected, new MoneyFormatter(culture, symbol).FormatSigned(paise));
+        Assert.Equal(expected, Plain(new MoneyFormatter(culture, symbol).FormatSigned(paise)));
 
     [Fact]
     public void Unknown_culture_falls_back_to_en_IN() =>
@@ -65,7 +76,7 @@ public class MoneyFormatterTests
     {
         Assert.Equal("1,000 chips", Inr.FormatChips(1_000));
         Assert.Equal("1 chip", Inr.FormatChips(1));
-        Assert.Equal("+1,500 chips", Inr.FormatSignedChips(1_500));
+        Assert.Equal("+1,500 chips", Plain(Inr.FormatSignedChips(1_500)));
         Assert.Equal(50_000, MoneyFormatter.ChipsToMoney(1_000, new ChipRate(1_000, 50_000)));
         Assert.Equal(33, MoneyFormatter.ChipsToMoney(1, new ChipRate(3, 100)));
     }
@@ -87,7 +98,7 @@ public class MoneyFormatterTests
     {
         var money = new GameMoney(Inr, new GameSettings { ChipMode = true, ChipRate = new ChipRate(1_000, 50_000) });
         Assert.Equal("2,000 chips · ₹1,000", money.UnitsWithMoney(2_000));
-        Assert.Equal("+500 chips (+₹250)", money.SignedUnitsWithMoney(500));
+        Assert.Equal("+500 chips (+₹250)", Plain(money.SignedUnitsWithMoney(500)));
         Assert.Equal("+ 1,000", money.BuyInButton(1_000));
     }
 }

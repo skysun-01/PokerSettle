@@ -11,6 +11,12 @@ public sealed class MoneyFormatter
 {
     /// <summary>U+2212 MINUS SIGN; reads better than a hyphen and screen readers announce it as "minus".</summary>
     public const char MinusSign = '−';
+
+    /// <summary>
+    /// U+2060 WORD JOINER (invisible) between the sign and the amount. Unicode allows a line break between
+    /// "−" and "₹", which split "−₹900" across lines in narrow layouts.
+    /// </summary>
+    public const char Joiner = '⁠';
     public const string DefaultCulture = "en-IN";
     public const string DefaultCurrency = "₹";
 
@@ -48,13 +54,13 @@ public sealed class MoneyFormatter
     }
 
     /// <summary>"₹1,25,000", "₹1,250.50"; negative amounts get a leading minus sign.</summary>
-    public string Format(long paise) => paise < 0 ? MinusSign + WithSymbol(paise) : WithSymbol(paise);
+    public string Format(long paise) => paise < 0 ? Minus + WithSymbol(paise) : WithSymbol(paise);
 
     /// <summary>"+₹1,250", "−₹500", "₹0".</summary>
     public string FormatSigned(long paise) => paise switch
     {
-        > 0 => "+" + WithSymbol(paise),
-        < 0 => MinusSign + WithSymbol(paise),
+        > 0 => Plus + WithSymbol(paise),
+        < 0 => Minus + WithSymbol(paise),
         _ => WithSymbol(0),
     };
 
@@ -62,8 +68,11 @@ public sealed class MoneyFormatter
     public string FormatNumber(long paise)
     {
         var text = Number(paise);
-        return paise < 0 ? MinusSign + text : text;
+        return paise < 0 ? Minus + text : text;
     }
+
+    private static readonly string Plus = "+" + Joiner;
+    private static readonly string Minus = MinusSign.ToString() + Joiner;
 
     /// <summary>Plain value for an input box: "1250" or "1250.50" (culture decimal separator, no grouping).</summary>
     public string FormatForInput(long paise)
@@ -82,12 +91,12 @@ public sealed class MoneyFormatter
     public string FormatChipCount(long chips)
     {
         var text = Math.Abs((decimal)chips).ToString("N0", _numbers);
-        return chips < 0 ? MinusSign + text : text;
+        return chips < 0 ? Minus + text : text;
     }
 
     public string FormatSignedChips(long chips) => chips switch
     {
-        > 0 => "+" + FormatChips(chips),
+        > 0 => Plus + FormatChips(chips),
         < 0 => FormatChips(chips),
         _ => FormatChips(0),
     };
@@ -112,6 +121,9 @@ public sealed class MoneyFormatter
     public string FormatDate(DateOnly date) => date.ToString("ddd, d MMM yyyy", Culture);
 
     public string FormatShortDate(DateOnly date) => date.ToString("ddd, d MMM", Culture);
+
+    /// <summary>"19 Oct 2026": short but unambiguous across years.</summary>
+    public string FormatCompactDate(DateOnly date) => date.ToString("d MMM yyyy", Culture);
 
     public string FormatDateTime(DateTimeOffset value) => value.ToLocalTime().ToString("d MMM yyyy, HH:mm", Culture);
 

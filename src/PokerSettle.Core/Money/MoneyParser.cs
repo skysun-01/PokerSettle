@@ -75,7 +75,7 @@ public static class MoneyParser
         var sb = new StringBuilder(s.Length);
         foreach (var ch in s)
         {
-            if (!char.IsWhiteSpace(ch) && ch != ' ' && ch != ' ') sb.Append(ch);
+            if (!char.IsWhiteSpace(ch) && ch != ' ' && ch != ' ' && ch != MoneyFormatter.Joiner) sb.Append(ch);
         }
         return sb.ToString();
     }

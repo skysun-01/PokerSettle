@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                xmlns:pages="clr-namespace:PokerSettle.App.Pages"
+                xmlns:controls="clr-namespace:PokerSettle.App.Controls"
+                xmlns:vm="clr-namespace:PokerSettle.Core.ViewModels.Players;assembly=PokerSettle.Core"
+                x:Class="PokerSettle.App.Pages.PlayerDetailPage"
+                x:DataType="vm:PlayerDetailViewModel"
+                Title="{Binding Name}">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Edit" Command="{Binding EditCommand}" Order="Primary" />
+    </ContentPage.ToolbarItems>
+
+    <ContentPage.Resources>
+        <Style x:Key="StatTile" TargetType="Border" BasedOn="{StaticResource Card}">
+            <Setter Property="Padding" Value="12,10" />
+            <Setter Property="Margin" Value="0,0,8,8" />
+            <Setter Property="WidthRequest" Value="160" />
+        </Style>
+    </ContentPage.Resources>
+
+    <!-- One CollectionView: the header holds profile, stats and chart; items are the games (virtualized). -->
+    <CollectionView ItemsSource="{Binding Games}" SelectionMode="None" Margin="12,0">
+        <CollectionView.Header>
+            <VerticalStackLayout Spacing="8" Padding="4,8,4,4" MaximumWidthRequest="980" HorizontalOptions="Fill">
+                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="14">
+                    <controls:AvatarView Initials="{Binding Initials}" ColorHex="{Binding Color}" Size="64" />
+                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                        <Label Text="{Binding Name}" Style="{StaticResource Title}" />
+                        <Label Text="{Binding Subtitle}" Style="{StaticResource Secondary}" IsVisible="{Binding Subtitle, Converter={StaticResource HasText}}" />
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Column="2" VerticalOptions="Center">
+                        <Label Text="Net" Style="{StaticResource Caption}" HorizontalTextAlignment="End" />
+                        <controls:SignedLabel Text="{Binding NetText}" Sign="{Binding NetSign}" FontSize="26" HorizontalTextAlignment="End" />
+                    </VerticalStackLayout>
+                </Grid>
+
+                <HorizontalStackLayout IsVisible="{Binding HasUpi}" Spacing="8">
+                    <Label Text="{Binding UpiId, StringFormat='UPI: {0}'}" VerticalOptions="Center" Style="{StaticResource Secondary}" />
+                    <Button Text="Copy UPI ID" Style="{StaticResource TextButton}" Command="{Binding CopyUpiCommand}" />
+                </HorizontalStackLayout>
+
+                <FlexLayout Wrap="Wrap" Margin="0,4,0,0">
+                    <Border Style="{StaticResource StatTile}">
+                        <VerticalStackLayout><Label Text="Games" Style="{StaticResource Caption}" /><Label Text="{Binding GamesText}" Style="{StaticResource Strong}" FontSize="20" /></VerticalStackLayout>
+                    </Border>
+                    <Border Style="{StaticResource StatTile}">
+                        <VerticalStackLayout><Label Text="Winning nights" Style="{StaticResource Caption}" /><Label Text="{Binding WinRateText}" Style="{StaticResource Strong}" FontSize="20" /></VerticalStackLayout>
+                    </Border>
+                    <Border Style="{StaticResource StatTile}">
+                        <VerticalStackLayout><Label Text="Average per game" Style="{StaticResource Caption}" /><controls:SignedLabel Text="{Binding AverageText}" Sign="{Binding AverageSign}" FontSize="20" /></VerticalStackLayout>
+                    </Border>
+                    <Border Style="{StaticResource StatTile}">
+                        <VerticalStackLayout><Label Text="Total won" Style="{StaticResource Caption}" /><Label Text="{Binding WonText}" Style="{StaticResource Strong}" FontSize="20" /></VerticalStackLayout>
+                    </Border>
+                    <Border Style="{StaticResource StatTile}">
+                        <VerticalStackLayout><Label Text="Total lost" Style="{StaticResource Caption}" /><Label Text="{Binding LostText}" Style="{StaticResource Strong}" FontSize="20" /></VerticalStackLayout>
+                    </Border>
+                    <Border Style="{StaticResource StatTile}">
+                        <VerticalStackLayout><Label Text="Biggest win" Style="{StaticResource Caption}" /><Label Text="{Binding BestText}" Style="{StaticResource Strong}" FontSize="20" /></VerticalStackLayout>
+                    </Border>
+                    <Border Style="{StaticResource StatTile}">
+                        <VerticalStackLayout><Label Text="Biggest loss" Style="{StaticResource Caption}" /><Label Text="{Binding WorstText}" Style="{StaticResource Strong}" FontSize="20" /></VerticalStackLayout>
+                    </Border>
+                    <Border Style="{StaticResource StatTile}">
+                        <VerticalStackLayout><Label Text="Last played" Style="{StaticResource Caption}" /><Label Text="{Binding LastPlayedText}" Style="{StaticResource Strong}" FontSize="16" /></VerticalStackLayout>
+                    </Border>
+                </FlexLayout>
+
+                <Label Text="Cumulative result" Style="{StaticResource SectionTitle}" Margin="4,8,4,0" />
+                <Border Style="{StaticResource Card}" Padding="8">
+                    <controls:ProfitChartView Data="{Binding Chart}" HeightRequest="220" />
+                </Border>
+
+                <Label Text="Notes" Style="{StaticResource SectionTitle}" IsVisible="{Binding HasNotes}" />
+                <Label Text="{Binding Notes}" IsVisible="{Binding HasNotes}" />
+
+                <Label Text="Games" Style="{StaticResource SectionTitle}" />
+            </VerticalStackLayout>
+        </CollectionView.Header>
+
+        <CollectionView.EmptyView>
+            <Label Text="No finished games yet." Style="{StaticResource Secondary}" Margin="16,24" />
+        </CollectionView.EmptyView>
+
+        <CollectionView.ItemTemplate>
+            <DataTemplate x:DataType="vm:PlayerGameItem">
+                <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" Padding="8,10" ColumnSpacing="12" MinimumHeightRequest="56"
+                      MaximumWidthRequest="980" SemanticProperties.Description="{Binding Description}">
+                    <Label Text="{Binding Title}" Style="{StaticResource Strong}" LineBreakMode="TailTruncation" />
+                    <Label Grid.Row="1" Text="{Binding DateText}" Style="{StaticResource Caption}" />
+                    <controls:SignedLabel Grid.Column="1" Text="{Binding NetText}" Sign="{Binding NetSign}" FontSize="17" HorizontalTextAlignment="End" />
+                    <Label Grid.Column="1" Grid.Row="1" Text="{Binding Detail}" Style="{StaticResource Caption}" HorizontalTextAlignment="End" />
+                    <Button Grid.ColumnSpan="2" Grid.RowSpan="2" Style="{StaticResource RowButton}" Command="{Binding OpenCommand}" CommandParameter="{Binding .}" SemanticProperties.Description="{Binding Description}" />
+                </Grid>
+            </DataTemplate>
+        </CollectionView.ItemTemplate>
+
+        <CollectionView.Footer>
+            <HorizontalStackLayout Padding="4,16,4,32" Spacing="8">
+                <Button Text="Merge a duplicate into this player" Style="{StaticResource OutlineButton}" Command="{Binding MergeCommand}"
+                        SemanticProperties.Hint="Moves another player's games into this one" />
+            </HorizontalStackLayout>
+        </CollectionView.Footer>
+    </CollectionView>
+</pages:BasePage>

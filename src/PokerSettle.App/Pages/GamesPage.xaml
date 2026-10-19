@@ -1,13 +1,58 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
                 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                 xmlns:pages="clr-namespace:PokerSettle.App.Pages"
-                xmlns:vm="clr-namespace:PokerSettle.Core.ViewModels;assembly=PokerSettle.Core"
+                xmlns:vm="clr-namespace:PokerSettle.Core.ViewModels.Games;assembly=PokerSettle.Core"
                 x:Class="PokerSettle.App.Pages.GamesPage"
                 x:DataType="vm:GamesViewModel"
-                Title="{Binding Title}">
-    <VerticalStackLayout Padding="16" Spacing="8">
-        <Label Text="{Binding Title}" Style="{StaticResource Heading}" />
-        <Label Text="Games history arrives in phase 3." Style="{StaticResource Secondary}" />
-    </VerticalStackLayout>
+                SnackbarInset="84"
+                Title="Games">
+    <Grid RowDefinitions="Auto,Auto,*,Auto">
+        <SearchBar Text="{Binding SearchText}" Placeholder="Search by title or player" Margin="8,4,8,0"
+                   SemanticProperties.Description="Search games by title or player" />
+
+        <FlexLayout Grid.Row="1" Wrap="Wrap" AlignItems="Center" Padding="16,0,12,4">
+            <Label Text="{Binding Summary}" Style="{StaticResource Caption}" Margin="0,0,16,0" VerticalOptions="Center" />
+            <Label Text="Filter by date" Style="{StaticResource Caption}" VerticalOptions="Center" />
+            <Switch IsToggled="{Binding FilterByDate}" Margin="4,0,12,0" SemanticProperties.Description="Filter by date" />
+            <HorizontalStackLayout IsVisible="{Binding FilterByDate}" Spacing="6">
+                <DatePicker Date="{Binding FromDate}" Format="d MMM yyyy" SemanticProperties.Description="From date" />
+                <Label Text="to" VerticalOptions="Center" Style="{StaticResource Caption}" />
+                <DatePicker Date="{Binding ToDate}" Format="d MMM yyyy" SemanticProperties.Description="To date" />
+            </HorizontalStackLayout>
+        </FlexLayout>
+
+        <CollectionView Grid.Row="2" ItemsSource="{Binding Items}" SelectionMode="None" Margin="12,0">
+            <CollectionView.EmptyView>
+                <VerticalStackLayout Padding="24,48" Spacing="12" HorizontalOptions="Center">
+                    <Label Text="{Binding EmptyText}" Style="{StaticResource Secondary}" FontSize="16" HorizontalTextAlignment="Center" />
+                    <Button Text="Clear search and filters" Style="{StaticResource OutlineButton}" Command="{Binding ClearFiltersCommand}"
+                            IsVisible="{Binding HasNoGamesAtAll, Converter={StaticResource Not}}" HorizontalOptions="Center" />
+                </VerticalStackLayout>
+            </CollectionView.EmptyView>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="vm:GameRow">
+                    <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto" Padding="6,10" ColumnSpacing="12" RowSpacing="2"
+                          MinimumHeightRequest="64" SemanticProperties.Description="{Binding Description}">
+                        <Label Text="{Binding Title}" Style="{StaticResource Strong}" LineBreakMode="TailTruncation" />
+                        <Label Grid.Row="1" Grid.RowSpan="2" Text="{Binding Subtitle}" Style="{StaticResource Caption}" />
+                        <VerticalStackLayout Grid.Column="1" Grid.RowSpan="3" Spacing="4" VerticalOptions="Center" HorizontalOptions="End">
+                            <Border Style="{StaticResource BadgeProgress}" IsVisible="{Binding IsInProgress}" HorizontalOptions="End">
+                                <Label Text="In progress" Style="{StaticResource BadgeProgressText}" />
+                            </Border>
+                            <Border Style="{StaticResource BadgeUnpaid}" IsVisible="{Binding HasUnpaid}" HorizontalOptions="End">
+                                <Label Text="{Binding UnpaidText}" Style="{StaticResource BadgeUnpaidText}" />
+                            </Border>
+                            <Label Text="{Binding TopWinnerText}" Style="{StaticResource Caption}" IsVisible="{Binding HasTopWinner}" HorizontalTextAlignment="End" />
+                        </VerticalStackLayout>
+                        <Button Grid.ColumnSpan="2" Grid.RowSpan="3" Style="{StaticResource RowButton}" Command="{Binding OpenCommand}" CommandParameter="{Binding .}" SemanticProperties.Description="{Binding Description}" />
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <Border Grid.Row="3" Style="{StaticResource BottomBar}">
+            <Button Text="New game" Command="{Binding NewGameCommand}" Style="{StaticResource BigButton}" MaximumWidthRequest="480" />
+        </Border>
+    </Grid>
 </pages:BasePage>

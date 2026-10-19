@@ -1,4 +1,4 @@
-﻿# Poker Settle — build plan
+# Poker Settle — build plan
 
 Checklist from the spec's phases. Ticked items are done, built for Android and Windows, and covered by passing tests where applicable.
 
@@ -26,10 +26,10 @@ Checklist from the spec's phases. Ticked items are done, built for Android and W
 - [x] Tests: money, settlement (unit + FsCheck properties), suggestions, data-layer game flows
 
 ## Phase 3 — History and board
-- [ ] Games history: search, date filter, badges, detail, new game with same players/settings, delete with undo
-- [ ] Board: one GROUP BY query, sortable columns, time filters, archived toggle, remembered sort/filter, table/cards adaptive
-- [ ] Player page: stats, cumulative profit chart (GraphicsView), game-by-game history
-- [ ] Tests: stats and time filters
+- [x] Games history: search, date filter, badges, detail, new game with same players/settings, delete with undo
+- [x] Board: one GROUP BY query, sortable columns, time filters, archived toggle, remembered sort/filter, table/cards adaptive
+- [x] Player page: stats, cumulative profit chart (GraphicsView), game-by-game history
+- [x] Tests: stats and time filters
 
 ## Phase 4 — Home, backup, polish
 - [ ] Home: resume, new game, top 3, last 5, pending payments, backup reminder

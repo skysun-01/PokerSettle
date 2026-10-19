@@ -57,6 +57,7 @@ public static class ShareText
 
         sb.AppendLine();
         sb.Append("Pot ").Append(money.UnitsWithMoney(game.Pot)).Append(" · ").Append(game.Entries.Count).AppendLine(" players");
-        return sb.ToString().TrimEnd();
+        // No invisible word joiners in text people paste into chats or UPI apps.
+        return sb.ToString().Replace(MoneyFormatter.Joiner.ToString(), string.Empty, StringComparison.Ordinal).TrimEnd();
     }
 }

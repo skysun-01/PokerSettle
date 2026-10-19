@@ -1,4 +1,4 @@
-﻿using PokerSettle.Core.ViewModels;
+﻿using PokerSettle.Core.ViewModels.Board;
 
 namespace PokerSettle.App.Pages;
 
