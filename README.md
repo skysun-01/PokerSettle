@@ -24,7 +24,7 @@ It runs on your Android phone (used at the table) and on your Windows PC. There 
 
 Check with `dotnet --info` and `dotnet workload list`. This machine was set up with .NET SDK 10.0.401, the android and maui-windows workloads, Android SDK platforms 35/36 and Temurin JDK 21.
 
-All scripts below are run from the repository folder (`C:\Users\SkySun\PokerSettle`) in PowerShell:
+All scripts below are run from the repository folder (`C:\Users\SkySun\source\repos\PokerSettle`) in PowerShell:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File scripts\<script>.ps1
@@ -138,7 +138,7 @@ Off by default, and when off nothing is written to disk.
 
 Choices made where the spec left room:
 
-1. **Project folder:** the session started in your home folder, so the app lives in `C:\Users\SkySun\PokerSettle` (rather than turning your whole home folder into a git repository).
+1. **Project folder:** the session started in your home folder, so the app was first created in its own folder rather than turning the home folder into a git repository; it now lives with your other projects in `C:\Users\SkySun\source\repos\PokerSettle`.
 2. **Versions:** .NET 10 (SDK 10.0.401), MAUI 10.0.110, CommunityToolkit.Maui 15.0.1, CommunityToolkit.Mvvm 8.4.2, Microsoft.Data.Sqlite 10.0.13 (SQLitePCLRaw 2.1.13, whose Android libraries are 16 KB-aligned; verified), xUnit 2.9.3 and FsCheck 3.5.0. Versions are pinned centrally in `Directory.Packages.props`.
 3. **SQLite access:** Microsoft.Data.Sqlite with hand-written SQL instead of an ORM. It uses no reflection (safe for trimmed release builds) and gives full control of WAL, foreign keys, transactions, `quick_check` and `VACUUM INTO`. One long-lived connection, serialized; `synchronous=FULL` so even a phone dying mid-game keeps every committed action.
 4. **Schema history:** version 1 (tables) and version 2 (store each player's net at finalization, plus board indexes), so the migration path is exercised and tested from day one. Ids are `AUTOINCREMENT`, so Undo of a deleted game can restore its original ids.
