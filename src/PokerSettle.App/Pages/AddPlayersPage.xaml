@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                xmlns:pages="clr-namespace:PokerSettle.App.Pages"
+                xmlns:controls="clr-namespace:PokerSettle.App.Controls"
+                xmlns:vm="clr-namespace:PokerSettle.Core.ViewModels.Games;assembly=PokerSettle.Core"
+                x:Class="PokerSettle.App.Pages.AddPlayersPage"
+                SnackbarInset="84"
+                x:DataType="vm:AddPlayersViewModel"
+                Title="Add players">
+    <Grid RowDefinitions="*,Auto">
+        <ScrollView>
+            <VerticalStackLayout Padding="16,8,16,24" Spacing="8" MaximumWidthRequest="760">
+                <Label Text="{Binding Hint}" Style="{StaticResource Secondary}" />
+                <Border Style="{StaticResource Card}">
+                    <controls:PlayerPickerView x:Name="Picker" BindingContext="{Binding Picker}" />
+                </Border>
+            </VerticalStackLayout>
+        </ScrollView>
+        <Border Grid.Row="1" Style="{StaticResource BottomBar}">
+            <Button Text="{Binding AddText}" Command="{Binding AddCommand}" Style="{StaticResource BigButton}" MaximumWidthRequest="480" />
+        </Border>
+    </Grid>
+</pages:BasePage>

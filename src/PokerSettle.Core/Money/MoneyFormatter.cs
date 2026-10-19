@@ -36,7 +36,8 @@ public sealed class MoneyFormatter
         {
             try
             {
-                return CultureInfo.GetCultureInfo(cultureName);
+                // predefinedOnly: ICU otherwise invents a culture for unknown names instead of throwing.
+                return CultureInfo.GetCultureInfo(cultureName, predefinedOnly: true);
             }
             catch (CultureNotFoundException)
             {

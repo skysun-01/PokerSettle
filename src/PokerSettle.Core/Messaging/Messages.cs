@@ -12,10 +12,16 @@ public enum DataArea
     All = Players | Games | Results | Payments,
 }
 
-/// <summary>Sent (WeakReferenceMessenger) after any write, so screens refresh only what changed.</summary>
-public sealed record DataChangedMessage(DataArea Area, long? GameId = null)
+/// <summary>
+/// Sent (WeakReferenceMessenger) after any write, so screens refresh only what changed.
+/// <paramref name="Source"/> is the sender, so a screen can ignore its own changes.
+/// </summary>
+public sealed record DataChangedMessage(DataArea Area, long? GameId = null, object? Source = null)
 {
     public bool Affects(DataArea area) => (Area & area) != 0;
+
+    /// <summary>True for changes to this game, or to all games (import, clear, demo switch).</summary>
+    public bool AffectsGame(long gameId) => GameId == gameId || (GameId is null && Affects(DataArea.Games));
 }
 
 /// <summary>A Preferences-backed setting changed; key names are in AppSettings.</summary>

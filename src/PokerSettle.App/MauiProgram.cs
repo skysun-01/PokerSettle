@@ -25,10 +25,19 @@ public static class MauiProgram
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
             });
 
+        var dataDirectory = FileSystem.AppDataDirectory;
+#if DEBUG
+        // Developer-only: run a second copy against a scratch folder without touching real data.
+        if (Environment.GetEnvironmentVariable("POKERSETTLE_DATA_DIR") is { Length: > 0 } scratch) dataDirectory = scratch;
+#endif
+
         // The debug-logging flag lives in Preferences so it's known before the database opens.
         var preferences = new MauiPreferencesStore();
         var logSwitch = new LogSwitch(preferences.GetBool("debug_logging", false));
-        var logWriter = new JsonLogWriter(new LogFileStore(Path.Combine(FileSystem.AppDataDirectory, "logs")));
+#if DEBUG
+        if (Environment.GetEnvironmentVariable("POKERSETTLE_DEBUG_LOG") == "1") logSwitch.Enabled = true;
+#endif
+        var logWriter = new JsonLogWriter(new LogFileStore(Path.Combine(dataDirectory, "logs")));
 
         builder.Logging.SetMinimumLevel(LogLevel.Debug);
         builder.Logging.AddFilter("Microsoft", LogLevel.Warning);
@@ -43,10 +52,10 @@ public static class MauiProgram
         services.AddSingleton(logSwitch);
         services.AddSingleton(logWriter);
         services.AddSingleton<IMessenger>(WeakReferenceMessenger.Default);
-        services.AddSingleton(new CrashMarker(FileSystem.AppDataDirectory));
+        services.AddSingleton(new CrashMarker(dataDirectory));
         services.AddSingleton(new DatabaseOptions
         {
-            DirectoryPath = FileSystem.AppDataDirectory,
+            DirectoryPath = dataDirectory,
 #if DEBUG
             StartWithDemo = preferences.GetBool("use_demo_database", false),
 #endif

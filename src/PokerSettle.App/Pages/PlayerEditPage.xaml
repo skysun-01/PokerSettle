@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+                xmlns:pages="clr-namespace:PokerSettle.App.Pages"
+                xmlns:controls="clr-namespace:PokerSettle.App.Controls"
+                xmlns:vm="clr-namespace:PokerSettle.Core.ViewModels.Players;assembly=PokerSettle.Core"
+                x:Class="PokerSettle.App.Pages.PlayerEditPage"
+                SnackbarInset="84"
+                x:DataType="vm:PlayerEditViewModel"
+                Title="{Binding PageTitle}">
+    <ContentPage.Resources>
+        <toolkit:IsStringNotNullOrEmptyConverter x:Key="HasText" />
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="*,Auto">
+        <ScrollView>
+            <VerticalStackLayout Padding="16,12,16,24" Spacing="6" MaximumWidthRequest="640">
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="16" Margin="0,0,0,8">
+                    <controls:AvatarView Initials="{Binding Initials}" ColorHex="{Binding SelectedColor}" Size="64" />
+                    <Label Grid.Column="1" Text="{Binding PageTitle}" Style="{StaticResource Title}" VerticalOptions="Center" />
+                </Grid>
+
+                <Label Text="Name" Style="{StaticResource Secondary}" />
+                <Entry x:Name="NameEntry" Text="{Binding Name}" Placeholder="e.g. Rahul Sharma" MaxLength="60"
+                       Keyboard="Text" IsSpellCheckEnabled="False"
+                       SemanticProperties.Description="Name, required" />
+                <Label Text="{Binding NameError}" Style="{StaticResource ErrorText}"
+                       IsVisible="{Binding NameError, Converter={StaticResource HasText}}" />
+                <Button Text="{Binding DidYouMean}" Style="{StaticResource TextButton}" HorizontalOptions="Start" Padding="0,4"
+                        Command="{Binding OpenDidYouMeanCommand}"
+                        IsVisible="{Binding DidYouMean, Converter={StaticResource HasText}}"
+                        SemanticProperties.Hint="Opens the existing player" />
+
+                <Label Text="Nickname (optional)" Style="{StaticResource Secondary}" Margin="0,8,0,0" />
+                <Entry x:Name="NicknameEntry" Text="{Binding Nickname}" MaxLength="40" SemanticProperties.Description="Nickname" />
+
+                <Label Text="Phone (optional)" Style="{StaticResource Secondary}" Margin="0,8,0,0" />
+                <Entry x:Name="PhoneEntry" Text="{Binding Phone}" Keyboard="Telephone" MaxLength="20" SemanticProperties.Description="Phone number" />
+                <Label Text="{Binding PhoneError}" Style="{StaticResource ErrorText}"
+                       IsVisible="{Binding PhoneError, Converter={StaticResource HasText}}" />
+
+                <Label Text="UPI ID (optional)" Style="{StaticResource Secondary}" Margin="0,8,0,0" />
+                <Entry x:Name="UpiEntry" Text="{Binding UpiId}" Placeholder="name@bank" Keyboard="Email" MaxLength="80"
+                       IsSpellCheckEnabled="False" SemanticProperties.Description="UPI ID" />
+                <Label Text="{Binding UpiError}" Style="{StaticResource ErrorText}"
+                       IsVisible="{Binding UpiError, Converter={StaticResource HasText}}" />
+                <Label Text="Shown next to payments to this player when you share a game." Style="{StaticResource Caption}" />
+
+                <Label Text="Notes (optional)" Style="{StaticResource Secondary}" Margin="0,8,0,0" />
+                <Editor Text="{Binding Notes}" AutoSize="TextChanges" MaxLength="500" SemanticProperties.Description="Notes" />
+
+                <Label Text="Color" Style="{StaticResource Secondary}" Margin="0,8,0,4" />
+                <FlexLayout Wrap="Wrap" BindableLayout.ItemsSource="{Binding Colors}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="vm:ColorChoice">
+                            <Border WidthRequest="48" HeightRequest="48" Margin="0,0,8,8" StrokeShape="Ellipse" StrokeThickness="0"
+                                    BackgroundColor="{Binding Color}"
+                                    SemanticProperties.Description="Avatar color">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectCommand}" CommandParameter="{Binding .}" />
+                                </Border.GestureRecognizers>
+                                <Label Text="✓" TextColor="White" FontSize="22" FontFamily="OpenSansSemibold"
+                                       HorizontalOptions="Center" VerticalOptions="Center" IsVisible="{Binding IsSelected}" />
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </FlexLayout>
+
+                <!-- Archive / delete -->
+                <VerticalStackLayout IsVisible="{Binding IsEditing}" Spacing="8" Margin="0,16,0,0">
+                    <BoxView Style="{StaticResource Divider}" />
+                    <Label Text="{Binding ManageHint}" Style="{StaticResource Caption}" />
+                    <HorizontalStackLayout Spacing="8">
+                        <Button Text="Archive player" Style="{StaticResource OutlineButton}" Command="{Binding ToggleArchiveCommand}">
+                            <Button.Triggers>
+                                <DataTrigger TargetType="Button" Binding="{Binding IsArchived}" Value="True">
+                                    <Setter Property="Text" Value="Unarchive player" />
+                                </DataTrigger>
+                            </Button.Triggers>
+                        </Button>
+                        <Button Text="Delete player" Style="{StaticResource DangerButton}" Command="{Binding DeleteCommand}"
+                                IsVisible="{Binding CanDelete}" />
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <Border Grid.Row="1" Style="{StaticResource BottomBar}">
+            <Button Text="Save" Command="{Binding SaveCommand}" Style="{StaticResource BigButton}" MaximumWidthRequest="480" />
+        </Border>
+    </Grid>
+</pages:BasePage>

@@ -16,14 +16,14 @@ Checklist from the spec's phases. Ticked items are done, built for Android and W
 - [x] Tests: migrations, corruption recovery, snapshots, logger (off writes nothing, rolling, redaction), crash marker
 
 ## Phase 2 — Game night
-- [ ] Money: paise math, parsing, culture-aware formatting (en-IN default), signed/colored results
-- [ ] Settlement engine: fewest payments, banker, rounding (largest remainder), chip mode, discrepancy options
-- [ ] Players: searchable list, add/edit, duplicate blocking, "Did you mean …?", archive/delete rules
-- [ ] New game: defaults, suggestions ranking, same-as-last-game, add-new-from-search, auto first buy-in, chip mode
-- [ ] Live game: cards, buy-ins (haptic), custom amounts, buy-in list with removal, undo snackbar, late players, early cash-out, keep screen on
-- [ ] Cash-out: live results, sticky footer, fill remaining, discrepancy resolution, validation
-- [ ] Review + finalize (nets stored on entries in the same transaction), mark paid, share/copy, reopen
-- [ ] Tests: money, settlement (unit + FsCheck properties), suggestions
+- [x] Money: paise math, parsing, culture-aware formatting (en-IN default), signed/colored results
+- [x] Settlement engine: fewest payments, banker, rounding (largest remainder), chip mode, discrepancy options
+- [x] Players: searchable list, add/edit, duplicate blocking, "Did you mean …?", archive/delete rules
+- [x] New game: defaults, suggestions ranking, same-as-last-game, add-new-from-search, auto first buy-in, chip mode
+- [x] Live game: cards, buy-ins (haptic), custom amounts, buy-in list with removal, undo snackbar, late players, early cash-out, keep screen on
+- [x] Cash-out: live results, sticky footer, fill remaining, discrepancy resolution, validation
+- [x] Review + finalize (nets stored on entries in the same transaction), mark paid, share/copy, reopen
+- [x] Tests: money, settlement (unit + FsCheck properties), suggestions, data-layer game flows
 
 ## Phase 3 — History and board
 - [ ] Games history: search, date filter, badges, detail, new game with same players/settings, delete with undo

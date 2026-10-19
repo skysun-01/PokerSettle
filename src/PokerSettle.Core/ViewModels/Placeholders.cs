@@ -18,8 +18,3 @@ public sealed class BoardViewModel(CoreServices services) : ViewModelBase(servic
 {
     public string Title => "Board";
 }
-
-public sealed class PlayersViewModel(CoreServices services) : ViewModelBase(services)
-{
-    public string Title => "Players";
-}

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+                xmlns:pages="clr-namespace:PokerSettle.App.Pages"
+                xmlns:controls="clr-namespace:PokerSettle.App.Controls"
+                xmlns:vm="clr-namespace:PokerSettle.Core.ViewModels.Games;assembly=PokerSettle.Core"
+                x:Class="PokerSettle.App.Pages.ReviewPage"
+                SnackbarInset="84"
+                x:DataType="vm:ReviewViewModel"
+                Title="Review">
+    <ContentPage.Resources>
+        <toolkit:IsStringNotNullOrEmptyConverter x:Key="HasText" />
+
+        <DataTemplate x:Key="ResultTemplate" x:DataType="vm:ResultRow">
+            <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="12" Padding="0,8"
+                  SemanticProperties.Description="{Binding Description}">
+                <controls:AvatarView Grid.RowSpan="2" Initials="{Binding Initials}" ColorHex="{Binding Color}" Size="40" VerticalOptions="Center" />
+                <Label Grid.Column="1" Text="{Binding Name}" Style="{StaticResource Strong}" LineBreakMode="TailTruncation" />
+                <Label Grid.Column="1" Grid.Row="1" Text="{Binding Details}" Style="{StaticResource Caption}" />
+                <controls:SignedLabel Grid.Column="2" Grid.RowSpan="2" Text="{Binding NetText}" Sign="{Binding NetSign}" FontSize="18" VerticalOptions="Center" />
+                <Label Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding Note}" Style="{StaticResource Caption}" IsVisible="{Binding HasNote}" />
+            </Grid>
+        </DataTemplate>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="*,Auto">
+        <ScrollView>
+            <VerticalStackLayout Padding="16,8,16,24" Spacing="6" MaximumWidthRequest="760">
+                <Label Text="{Binding PotText}" Style="{StaticResource Secondary}" />
+
+                <Border Style="{StaticResource Notice}" IsVisible="{Binding AdjustmentText, Converter={StaticResource HasText}}">
+                    <Label Text="{Binding AdjustmentText}" TextColor="{AppThemeBinding Light={StaticResource WarningTextLight}, Dark={StaticResource WarningTextDark}}" />
+                </Border>
+                <Label Text="{Binding WarningText}" Style="{StaticResource WarningText}"
+                       IsVisible="{Binding WarningText, Converter={StaticResource HasText}}" />
+
+                <Label Text="Results" Style="{StaticResource SectionTitle}" />
+                <Border Style="{StaticResource Card}" Padding="14,4">
+                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding Results}" BindableLayout.ItemTemplate="{StaticResource ResultTemplate}" />
+                </Border>
+
+                <Label Text="How to settle" Style="{StaticResource SectionTitle}" />
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="6">
+                        <Picker ItemsSource="{Binding Modes}" SelectedIndex="{Binding ModeIndex}" SemanticProperties.Description="Settlement mode" />
+                        <Label Text="Fewest payments pairs people up; Banker sends everything through one person."
+                               Style="{StaticResource Caption}" />
+                        <Picker IsVisible="{Binding IsBanker}" ItemsSource="{Binding PlayerNames}" SelectedIndex="{Binding BankerIndex}"
+                                Title="Banker" SemanticProperties.Description="Banker" />
+                        <Label Text="Rounding" Style="{StaticResource Secondary}" />
+                        <Picker ItemsSource="{Binding RoundingLabels}" SelectedIndex="{Binding RoundingIndex}" SemanticProperties.Description="Rounding of payments" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Label Text="{Binding PaymentsTitle}" Style="{StaticResource SectionTitle}" />
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="10">
+                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding Payments}" Spacing="10">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="vm:PaymentRow">
+                                    <Label Text="{Binding Text}" FontSize="17" />
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+                        <Label Text="{Binding NoPaymentsText}" Style="{StaticResource Secondary}"
+                               IsVisible="{Binding NoPaymentsText, Converter={StaticResource HasText}}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Label Text="{Binding ErrorText}" Style="{StaticResource ErrorText}"
+                       IsVisible="{Binding ErrorText, Converter={StaticResource HasText}}" />
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <Border Grid.Row="1" Style="{StaticResource BottomBar}">
+            <Button Text="Finalize game" Command="{Binding FinalizeCommand}" Style="{StaticResource BigButton}" MaximumWidthRequest="480"
+                    SemanticProperties.Hint="Saves the results and payments" />
+        </Border>
+    </Grid>
+</pages:BasePage>

@@ -99,6 +99,19 @@ public abstract partial class ViewModelBase : ObservableObject
         }
     }
 
+    /// <summary>"New game" from anywhere: resumes the game in progress instead of starting a second one.</summary>
+    [CommunityToolkit.Mvvm.Input.RelayCommand]
+    private Task NewGameAsync() => RunSafeAsync(async () =>
+    {
+        if (await Data.GetInProgressGameIdAsync() is { } running)
+        {
+            await Navigation.GoToAsync(Routes.LiveGame, new Dictionary<string, object> { [Routes.GameId] = running });
+            Snackbar.Show("A game is already in progress, so here it is.");
+            return;
+        }
+        await Navigation.GoToAsync(Routes.NewGame);
+    });
+
     protected static long? QueryLong(IDictionary<string, object> query, string key) =>
         query.TryGetValue(key, out var value) ? value switch
         {

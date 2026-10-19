@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:players="clr-namespace:PokerSettle.Core.ViewModels.Players;assembly=PokerSettle.Core"
+             x:Class="PokerSettle.App.Controls.PlayerPickerView"
+             x:DataType="players:PlayerPickerViewModel">
+    <ContentView.Resources>
+        <toolkit:IsStringNotNullOrEmptyConverter x:Key="HasText" />
+
+        <!-- One chip; selected chips are filled and start with ✓ (never color alone). -->
+        <DataTemplate x:Key="ChipTemplate" x:DataType="players:PickChip">
+            <Button Text="{Binding Label}"
+                    Style="{StaticResource ChipButton}"
+                    Command="{Binding ToggleCommand}"
+                    CommandParameter="{Binding .}"
+                    SemanticProperties.Description="{Binding Description}">
+                <Button.Triggers>
+                    <DataTrigger TargetType="Button" Binding="{Binding IsSelected}" Value="True">
+                        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource PrimaryLight}, Dark={StaticResource PrimaryDark}}" />
+                        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource OnPrimaryLight}, Dark={StaticResource OnPrimaryDark}}" />
+                        <Setter Property="FontFamily" Value="OpenSansSemibold" />
+                    </DataTrigger>
+                </Button.Triggers>
+            </Button>
+        </DataTemplate>
+    </ContentView.Resources>
+
+    <VerticalStackLayout Spacing="10">
+        <Grid ColumnDefinitions="*,Auto">
+            <Label Text="{Binding SelectionSummary}" Style="{StaticResource Strong}" VerticalOptions="Center"
+                   SemanticProperties.HeadingLevel="Level3" />
+            <Button Grid.Column="1" Text="Clear" Style="{StaticResource TextButton}"
+                    Command="{Binding ClearSelectionCommand}" IsVisible="{Binding HasSelection}"
+                    SemanticProperties.Description="Remove all selected players" />
+        </Grid>
+
+        <FlexLayout Wrap="Wrap" BindableLayout.ItemsSource="{Binding Selected}"
+                    BindableLayout.ItemTemplate="{StaticResource ChipTemplate}"
+                    IsVisible="{Binding HasSelection}" />
+
+        <Button Text="Same players as last game" Style="{StaticResource SecondaryButton}"
+                Command="{Binding SameAsLastGameCommand}" IsVisible="{Binding HasLastGame}"
+                HorizontalOptions="Start" />
+
+        <Entry x:Name="SearchEntry"
+               Text="{Binding SearchText}"
+               Placeholder="Search or add a player"
+               ReturnType="Done"
+               ReturnCommand="{Binding SubmitSearchCommand}"
+               ClearButtonVisibility="WhileEditing"
+               IsSpellCheckEnabled="False"
+               Keyboard="Text"
+               SemanticProperties.Description="Search players or type a new name" />
+
+        <Label Text="{Binding DidYouMean}" Style="{StaticResource WarningText}"
+               IsVisible="{Binding DidYouMean, Converter={StaticResource HasText}}" />
+
+        <FlexLayout Wrap="Wrap" BindableLayout.ItemsSource="{Binding SearchResults}"
+                    BindableLayout.ItemTemplate="{StaticResource ChipTemplate}"
+                    IsVisible="{Binding IsSearching}" />
+
+        <Button Text="{Binding AddNewText}" Style="{StaticResource OutlineButton}"
+                Command="{Binding AddNewCommand}" IsVisible="{Binding CanAddNew}"
+                HorizontalOptions="Start" LineBreakMode="TailTruncation" />
+        <Label Text="{Binding AddNewError}" Style="{StaticResource ErrorText}"
+               IsVisible="{Binding AddNewError, Converter={StaticResource HasText}}" />
+
+        <Label Text="Suggested" Style="{StaticResource Caption}" IsVisible="{Binding HasSuggestions}" Margin="0,6,0,0" />
+        <FlexLayout Wrap="Wrap" BindableLayout.ItemsSource="{Binding Suggestions}"
+                    BindableLayout.ItemTemplate="{StaticResource ChipTemplate}" />
+
+        <Label Text="No players yet. Type a name above and tap Add to create your first player."
+               Style="{StaticResource Secondary}" IsVisible="{Binding NoPlayersYet}" />
+    </VerticalStackLayout>
+</ContentView>

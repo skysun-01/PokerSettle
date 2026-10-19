@@ -6,8 +6,8 @@
                 x:Class="PokerSettle.App.Pages.HomePage"
                 x:DataType="vm:HomeViewModel"
                 Title="{Binding Title}">
-    <VerticalStackLayout Padding="16" Spacing="8">
-        <Label Text="{Binding Title}" Style="{StaticResource Heading}" />
+    <VerticalStackLayout Padding="16" Spacing="12" MaximumWidthRequest="760">
         <Label Text="Your home screen arrives in phase 4." Style="{StaticResource Secondary}" />
+        <Button Text="New game" Command="{Binding NewGameCommand}" Style="{StaticResource BigButton}" />
     </VerticalStackLayout>
 </pages:BasePage>

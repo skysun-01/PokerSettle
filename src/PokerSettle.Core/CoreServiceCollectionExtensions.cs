@@ -3,6 +3,8 @@ using PokerSettle.Core.Data;
 using PokerSettle.Core.Diagnostics;
 using PokerSettle.Core.Services;
 using PokerSettle.Core.ViewModels;
+using PokerSettle.Core.ViewModels.Games;
+using PokerSettle.Core.ViewModels.Players;
 using PokerSettle.Core.ViewModels.Settings;
 
 namespace PokerSettle.Core;
@@ -34,6 +36,13 @@ public static class CoreServiceCollectionExtensions
 
         // Pushed pages
         services.AddTransient<LogsViewModel>();
+        services.AddTransient<PlayerEditViewModel>();
+        services.AddTransient<NewGameViewModel>();
+        services.AddTransient<LiveGameViewModel>();
+        services.AddTransient<AddPlayersViewModel>();
+        services.AddTransient<CashOutViewModel>();
+        services.AddTransient<ReviewViewModel>();
+        services.AddTransient<GameDetailViewModel>();
         return services;
     }
 }

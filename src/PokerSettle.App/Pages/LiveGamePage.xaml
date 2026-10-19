@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+                xmlns:pages="clr-namespace:PokerSettle.App.Pages"
+                xmlns:controls="clr-namespace:PokerSettle.App.Controls"
+                xmlns:vm="clr-namespace:PokerSettle.Core.ViewModels.Games;assembly=PokerSettle.Core"
+                x:Class="PokerSettle.App.Pages.LiveGamePage"
+                SnackbarInset="84"
+                x:DataType="vm:LiveGameViewModel"
+                Title="{Binding Title}">
+    <ContentPage.Resources>
+        <toolkit:IsStringNotNullOrEmptyConverter x:Key="HasText" />
+    </ContentPage.Resources>
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Add player" Command="{Binding AddPlayersCommand}" Order="Primary" />
+    </ContentPage.ToolbarItems>
+
+    <Grid RowDefinitions="*,Auto">
+        <CollectionView x:Name="Cards" ItemsSource="{Binding Players}" SelectionMode="None" Margin="12,0">
+            <CollectionView.ItemsLayout>
+                <GridItemsLayout x:Name="CardsLayout" Orientation="Vertical" Span="1" VerticalItemSpacing="10" HorizontalItemSpacing="10" />
+            </CollectionView.ItemsLayout>
+
+            <CollectionView.Header>
+                <Grid ColumnDefinitions="*,Auto" Padding="4,8,4,12" ColumnSpacing="12">
+                    <VerticalStackLayout Spacing="0">
+                        <Label Text="{Binding Subtitle}" Style="{StaticResource Caption}" />
+                        <Label Text="{Binding PotText}" Style="{StaticResource BigNumber}"
+                               SemanticProperties.Description="{Binding PotText, StringFormat='Total pot {0}'}" />
+                        <Label Text="{Binding PotMoneyText}" Style="{StaticResource Secondary}"
+                               IsVisible="{Binding PotMoneyText, Converter={StaticResource HasText}}" />
+                        <Label Text="{Binding StatsText}" Style="{StaticResource Secondary}" />
+                    </VerticalStackLayout>
+                    <Button Grid.Column="1" Text="+ Player" Style="{StaticResource OutlineButton}" VerticalOptions="Center"
+                            Command="{Binding AddPlayersCommand}" SemanticProperties.Description="Add a late player" />
+                </Grid>
+            </CollectionView.Header>
+
+            <CollectionView.EmptyView>
+                <VerticalStackLayout Padding="24,32" Spacing="12">
+                    <Label Text="No players in this game." Style="{StaticResource Secondary}" HorizontalTextAlignment="Center" />
+                    <Button Text="Add players" Command="{Binding AddPlayersCommand}" HorizontalOptions="Center" />
+                </VerticalStackLayout>
+            </CollectionView.EmptyView>
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="vm:LiveEntryItem">
+                    <Border Style="{StaticResource Card}" Padding="14,12">
+                        <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" ColumnSpacing="12" RowSpacing="4">
+                            <controls:AvatarView Grid.RowSpan="2" Initials="{Binding Initials}" ColorHex="{Binding Color}" Size="44" VerticalOptions="Center" />
+
+                            <Label Grid.Column="1" Text="{Binding Name}" Style="{StaticResource Strong}" FontSize="18"
+                                   LineBreakMode="TailTruncation" SemanticProperties.HeadingLevel="Level3" />
+
+                            <!-- Tap the total to see (and remove) individual buy-ins -->
+                            <Label Grid.Column="1" Grid.Row="1" Text="{Binding SummaryText}" Style="{StaticResource Secondary}"
+                                   TextDecorations="Underline"
+                                   SemanticProperties.Hint="Shows the individual buy-ins">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding ToggleExpandedCommand}" />
+                                </Label.GestureRecognizers>
+                            </Label>
+
+                            <!-- Playing: the big + Buy-in button -->
+                            <Button Grid.Column="2" Grid.RowSpan="2" Text="{Binding BuyInButtonText}"
+                                    Command="{Binding AddBuyInCommand}" IsVisible="{Binding IsPlaying}"
+                                    FontSize="18" MinimumHeightRequest="56" MinimumWidthRequest="104" VerticalOptions="Center"
+                                    SemanticProperties.Description="{Binding BuyInButtonDescription}" />
+
+                            <!-- Cashed out early -->
+                            <VerticalStackLayout Grid.Column="2" Grid.RowSpan="2" IsVisible="{Binding IsCashedOut}" VerticalOptions="Center" Spacing="0">
+                                <Label Text="{Binding CashedOutText}" Style="{StaticResource Caption}" HorizontalTextAlignment="End" />
+                                <controls:SignedLabel Text="{Binding ResultText}" Sign="{Binding ResultSign}" FontSize="18" HorizontalTextAlignment="End" />
+                            </VerticalStackLayout>
+
+                            <!-- Secondary actions -->
+                            <HorizontalStackLayout Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Spacing="0" Margin="-12,0,0,0">
+                                <Button Text="Custom" Style="{StaticResource TextButton}" Command="{Binding OpenCustomCommand}"
+                                        IsVisible="{Binding IsPlaying}" SemanticProperties.Description="{Binding Name, StringFormat='Custom buy-in for {0}'}" />
+                                <Button Text="Cash out" Style="{StaticResource TextButton}" Command="{Binding OpenCashOutCommand}"
+                                        IsVisible="{Binding IsPlaying}" SemanticProperties.Description="{Binding Name, StringFormat='Cash out {0} early'}" />
+                                <Button Text="Reopen" Style="{StaticResource TextButton}" Command="{Binding ReopenCashOutCommand}"
+                                        IsVisible="{Binding IsCashedOut}" SemanticProperties.Description="{Binding Name, StringFormat='Put {0} back in the game'}" />
+                            </HorizontalStackLayout>
+
+                            <!-- Individual buy-ins -->
+                            <VerticalStackLayout Grid.Row="3" Grid.ColumnSpan="3" IsVisible="{Binding IsExpanded}" Spacing="0">
+                                <VerticalStackLayout BindableLayout.ItemsSource="{Binding BuyIns}">
+                                    <BindableLayout.ItemTemplate>
+                                        <DataTemplate x:DataType="vm:BuyInRow">
+                                            <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8" Padding="56,0,0,0">
+                                                <Label Text="{Binding AmountText}" VerticalOptions="Center" />
+                                                <Label Grid.Column="1" Text="{Binding TimeText}" Style="{StaticResource Caption}" VerticalOptions="Center" />
+                                                <Button Grid.Column="2" Text="Remove" Style="{StaticResource TextButton}"
+                                                        Command="{Binding RemoveCommand}" CommandParameter="{Binding .}"
+                                                        SemanticProperties.Description="{Binding RemoveDescription}" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </BindableLayout.ItemTemplate>
+                                </VerticalStackLayout>
+                                <Button Text="Remove player from game" Style="{StaticResource TextButton}" HorizontalOptions="End"
+                                        Command="{Binding RemoveCommand}" TextColor="{AppThemeBinding Light={StaticResource NegativeLight}, Dark={StaticResource NegativeDark}}" />
+                            </VerticalStackLayout>
+
+                            <!-- Custom amount -->
+                            <Grid Grid.Row="4" Grid.ColumnSpan="3" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8" IsVisible="{Binding IsCustomOpen}">
+                                <Entry Text="{Binding CustomText}" Keyboard="Numeric" ReturnType="Done" ReturnCommand="{Binding ConfirmCustomCommand}"
+                                       Placeholder="Buy-in amount" SemanticProperties.Description="{Binding Name, StringFormat='Custom buy-in amount for {0}'}">
+                                    <Entry.Behaviors>
+                                        <toolkit:SelectAllTextBehavior />
+                                    </Entry.Behaviors>
+                                </Entry>
+                                <Button Grid.Column="1" Text="Add" Command="{Binding ConfirmCustomCommand}" />
+                                <Button Grid.Column="2" Text="Cancel" Style="{StaticResource TextButton}" Command="{Binding CancelCustomCommand}" />
+                            </Grid>
+
+                            <!-- Early cash-out -->
+                            <Grid Grid.Row="4" Grid.ColumnSpan="3" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8" IsVisible="{Binding IsCashOutOpen}">
+                                <Entry Text="{Binding CashOutText}" Keyboard="Numeric" ReturnType="Done" ReturnCommand="{Binding ConfirmCashOutCommand}"
+                                       Placeholder="Final amount (0 is fine)" SemanticProperties.Description="{Binding Name, StringFormat='Final amount for {0}'}">
+                                    <Entry.Behaviors>
+                                        <toolkit:SelectAllTextBehavior />
+                                    </Entry.Behaviors>
+                                </Entry>
+                                <Button Grid.Column="1" Text="Save" Command="{Binding ConfirmCashOutCommand}" />
+                                <Button Grid.Column="2" Text="Cancel" Style="{StaticResource TextButton}" Command="{Binding CancelCashOutCommand}" />
+                            </Grid>
+
+                            <Label Grid.Row="5" Grid.ColumnSpan="3" Text="{Binding CustomError}" Style="{StaticResource ErrorText}"
+                                   IsVisible="{Binding CustomError, Converter={StaticResource HasText}}" />
+                            <Label Grid.Row="5" Grid.ColumnSpan="3" Text="{Binding CashOutError}" Style="{StaticResource ErrorText}"
+                                   IsVisible="{Binding CashOutError, Converter={StaticResource HasText}}" />
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+            <CollectionView.Footer>
+                <BoxView HeightRequest="16" Color="Transparent" />
+            </CollectionView.Footer>
+        </CollectionView>
+
+        <Border Grid.Row="1" Style="{StaticResource BottomBar}">
+            <Button Text="Cash out &amp; settle" Command="{Binding CashOutAllCommand}" Style="{StaticResource BigButton}"
+                    MaximumWidthRequest="480"
+                    SemanticProperties.Hint="Enter everyone's final amounts and work out who pays whom" />
+        </Border>
+    </Grid>
+</pages:BasePage>

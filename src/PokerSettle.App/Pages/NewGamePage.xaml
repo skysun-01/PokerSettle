@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+                xmlns:pages="clr-namespace:PokerSettle.App.Pages"
+                xmlns:controls="clr-namespace:PokerSettle.App.Controls"
+                xmlns:vm="clr-namespace:PokerSettle.Core.ViewModels.Games;assembly=PokerSettle.Core"
+                x:Class="PokerSettle.App.Pages.NewGamePage"
+                SnackbarInset="84"
+                x:DataType="vm:NewGameViewModel"
+                Title="New game">
+    <ContentPage.Resources>
+        <toolkit:IsStringNotNullOrEmptyConverter x:Key="HasText" />
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="*,Auto">
+        <ScrollView>
+            <VerticalStackLayout Padding="16,8,16,24" Spacing="6" MaximumWidthRequest="760">
+
+                <!-- Game -->
+                <Border Style="{StaticResource Card}">
+                    <Grid x:Name="DetailsGrid" ColumnDefinitions="*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="4" ColumnSpacing="16">
+                        <Label Text="Title" Style="{StaticResource Secondary}" />
+                        <Entry x:Name="TitleEntry" Grid.Row="1" Text="{Binding Title}" MaxLength="60"
+                               SemanticProperties.Description="Game title">
+                            <Entry.Behaviors>
+                                <toolkit:SelectAllTextBehavior />
+                            </Entry.Behaviors>
+                        </Entry>
+                        <Label Grid.Row="2" Text="{Binding TitleError}" Style="{StaticResource ErrorText}"
+                               IsVisible="{Binding TitleError, Converter={StaticResource HasText}}" />
+
+                        <Label Grid.Row="3" Text="Date" Style="{StaticResource Secondary}" />
+                        <DatePicker x:Name="GameDatePicker" Grid.Row="4" Date="{Binding Date}" Format="ddd, d MMM yyyy"
+                                    SemanticProperties.Description="Game date" />
+
+                        <Label x:Name="BuyInLabel" Grid.Row="5" Text="{Binding BuyInLabel}" Style="{StaticResource Secondary}" />
+                        <Grid x:Name="BuyInRow" Grid.Row="6" ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                            <Entry x:Name="BuyInEntry" Text="{Binding BuyInText}" Keyboard="Numeric"
+                                   SemanticProperties.Description="Default buy-in">
+                                <Entry.Behaviors>
+                                    <toolkit:SelectAllTextBehavior />
+                                </Entry.Behaviors>
+                            </Entry>
+                            <Label Grid.Column="1" Text="{Binding BuyInHint}" Style="{StaticResource Secondary}" VerticalOptions="Center"
+                                   IsVisible="{Binding BuyInHint, Converter={StaticResource HasText}}" />
+                        </Grid>
+                        <Label Grid.Row="7" Text="{Binding BuyInError}" Style="{StaticResource ErrorText}"
+                               IsVisible="{Binding BuyInError, Converter={StaticResource HasText}}" />
+
+                        <VerticalStackLayout Grid.Row="8" Spacing="4">
+                            <Label Text="Location (optional)" Style="{StaticResource Secondary}" />
+                            <Entry x:Name="LocationEntry" Text="{Binding Location}" MaxLength="60" Placeholder="e.g. Rahul's place"
+                                   SemanticProperties.Description="Location" />
+                        </VerticalStackLayout>
+                    </Grid>
+                </Border>
+
+                <!-- Players -->
+                <Label Text="Players" Style="{StaticResource SectionTitle}" />
+                <Border Style="{StaticResource Card}">
+                    <controls:PlayerPickerView x:Name="Picker" BindingContext="{Binding Picker}" />
+                </Border>
+                <Label Text="{Binding PlayersError}" Style="{StaticResource ErrorText}"
+                       IsVisible="{Binding PlayersError, Converter={StaticResource HasText}}" />
+
+                <!-- Options -->
+                <Label Text="Options" Style="{StaticResource SectionTitle}" />
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="12">
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                            <VerticalStackLayout VerticalOptions="Center">
+                                <Label Text="Everyone starts with 1 buy-in" />
+                                <Label Text="Late players get one too." Style="{StaticResource Caption}" />
+                            </VerticalStackLayout>
+                            <Switch Grid.Column="1" IsToggled="{Binding StartWithBuyIn}" VerticalOptions="Center"
+                                    SemanticProperties.Description="Everyone starts with 1 buy-in" />
+                        </Grid>
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                            <VerticalStackLayout VerticalOptions="Center">
+                                <Label Text="Play with chips" />
+                                <Label Text="Track whole chips; money is worked out at the end." Style="{StaticResource Caption}" />
+                            </VerticalStackLayout>
+                            <Switch Grid.Column="1" IsToggled="{Binding ChipMode}" VerticalOptions="Center"
+                                    SemanticProperties.Description="Chip mode" />
+                        </Grid>
+                        <VerticalStackLayout IsVisible="{Binding ChipMode}" Spacing="4">
+                            <Label Text="Chip rate" Style="{StaticResource Secondary}" />
+                            <Grid ColumnDefinitions="*,Auto,Auto,*" ColumnSpacing="8">
+                                <Entry Text="{Binding ChipRateChipsText}" Keyboard="Numeric" SemanticProperties.Description="Number of chips">
+                                    <Entry.Behaviors>
+                                        <toolkit:SelectAllTextBehavior />
+                                    </Entry.Behaviors>
+                                </Entry>
+                                <Label Grid.Column="1" Text="chips =" VerticalOptions="Center" />
+                                <Label Grid.Column="2" Text="{Binding ChipRateSymbol}" VerticalOptions="Center" />
+                                <Entry Grid.Column="3" Text="{Binding ChipRateMoneyText}" Keyboard="Numeric" SemanticProperties.Description="Worth in money">
+                                    <Entry.Behaviors>
+                                        <toolkit:SelectAllTextBehavior />
+                                    </Entry.Behaviors>
+                                </Entry>
+                            </Grid>
+                            <Label Text="{Binding ChipRateError}" Style="{StaticResource ErrorText}"
+                                   IsVisible="{Binding ChipRateError, Converter={StaticResource HasText}}" />
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <Border Grid.Row="1" Style="{StaticResource BottomBar}">
+            <Button Text="{Binding StartText}" Command="{Binding StartCommand}" Style="{StaticResource BigButton}"
+                    MaximumWidthRequest="480" />
+        </Border>
+    </Grid>
+</pages:BasePage>

@@ -21,9 +21,18 @@ public partial class SnackbarView : ContentView
     protected override void OnHandlerChanged()
     {
         base.OnHandlerChanged();
+        if (Handler is not null && FindPage() is Pages.BasePage page && page.SnackbarInset > 0)
+            Margin = new Thickness(12, 0, 12, 12 + page.SnackbarInset);
         if (_service is null) return;
         if (Handler is null) _service.PropertyChanged -= OnServiceChanged;
         else _service.PropertyChanged += OnServiceChanged;
+    }
+
+    private Page? FindPage()
+    {
+        Element? current = Parent;
+        while (current is not null and not Page) current = current.Parent;
+        return current as Page;
     }
 
     private void OnServiceChanged(object? sender, PropertyChangedEventArgs e)
@@ -38,10 +47,5 @@ public partial class SnackbarView : ContentView
         if (service.Message is { } message) SemanticScreenReader.Announce(message);
     }
 
-    private bool IsVisibleOnScreen()
-    {
-        Element? current = this;
-        while (current is not null and not Page) current = current.Parent;
-        return current is Page page && Shell.Current?.CurrentPage == page;
-    }
+    private bool IsVisibleOnScreen() => FindPage() is { } page && Shell.Current?.CurrentPage == page;
 }
