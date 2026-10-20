@@ -19,8 +19,8 @@
 
 		<ApplicationTitle>Poker Settle</ApplicationTitle>
 		<ApplicationId>com.pokersettle.app</ApplicationId>
-		<ApplicationDisplayVersion>1.0.0</ApplicationDisplayVersion>
-		<ApplicationVersion>1</ApplicationVersion>
+		<ApplicationDisplayVersion>1.1.0</ApplicationDisplayVersion>
+		<ApplicationVersion>2</ApplicationVersion>
 
 		<!-- Unpackaged: a plain .exe. Never change this; packaged apps keep data in a different folder. -->
 		<WindowsPackageType>None</WindowsPackageType>

@@ -29,6 +29,8 @@ public static class CoreServiceCollectionExtensions
         services.AddSingleton<DebugReportBuilder>();
         services.AddSingleton<Backup.BackupService>();
         services.AddSingleton<Backup.BackupCoordinator>();
+        services.AddSingleton<Leaderboard.ILeaderboardTransport, Leaderboard.HttpLeaderboardTransport>();
+        services.AddSingleton<Leaderboard.LeaderboardPublisher>();
 
         // Tabs
         services.AddSingleton<HomeViewModel>();

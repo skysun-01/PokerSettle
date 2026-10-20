@@ -35,6 +35,10 @@ public sealed class AppSettings
         public const string BoardIncludeArchived = "board_include_archived";
         public const string PlayersShowArchived = "players_show_archived";
         public const string UseDemoDatabase = "use_demo_database";
+        public const string LeaderboardUrl = "leaderboard_url";
+        public const string LeaderboardSecret = "leaderboard_secret";
+        public const string LeaderboardAutoPublish = "leaderboard_auto_publish";
+        public const string LeaderboardLastPublishedAt = "leaderboard_last_published_at";
     }
 
     private readonly IPreferencesStore _store;
@@ -159,6 +163,33 @@ public sealed class AppSettings
         set => _store.SetBool(Keys.UseDemoDatabase, value);
     }
 
+    /// <summary>Google Apps Script web app URL (…/exec) the online leaderboard is published to.</summary>
+    public string? LeaderboardUrl
+    {
+        get => _store.GetString(Keys.LeaderboardUrl, null);
+        set => _store.SetString(Keys.LeaderboardUrl, string.IsNullOrWhiteSpace(value) ? null : value.Trim());
+    }
+
+    /// <summary>Shared secret checked by the Apps Script, so only this app can write to the sheet.</summary>
+    public string? LeaderboardSecret
+    {
+        get => _store.GetString(Keys.LeaderboardSecret, null);
+        set => _store.SetString(Keys.LeaderboardSecret, string.IsNullOrWhiteSpace(value) ? null : value.Trim());
+    }
+
+    /// <summary>Publish the leaderboard automatically after a game is finalized (or results change).</summary>
+    public bool LeaderboardAutoPublish
+    {
+        get => _store.GetBool(Keys.LeaderboardAutoPublish, true);
+        set => _store.SetBool(Keys.LeaderboardAutoPublish, value);
+    }
+
+    public DateTimeOffset? LeaderboardLastPublishedAt
+    {
+        get => GetTimestamp(Keys.LeaderboardLastPublishedAt);
+        set => SetTimestamp(Keys.LeaderboardLastPublishedAt, value);
+    }
+
     /// <summary>Settings worth showing in the debug report (no personal data).</summary>
     public IReadOnlyList<KeyValuePair<string, string>> Describe() =>
     [
@@ -172,6 +203,8 @@ public sealed class AppSettings
         new("debugLogging", DebugLogging.ToString()),
         new("lastBackupAt", LastBackupAt?.ToString("O", CultureInfo.InvariantCulture) ?? "never"),
         new("useDemoDatabase", UseDemoDatabase.ToString()),
+        new("leaderboardConfigured", (!string.IsNullOrEmpty(LeaderboardUrl) && !string.IsNullOrEmpty(LeaderboardSecret)).ToString()),
+        new("leaderboardAutoPublish", LeaderboardAutoPublish.ToString()),
     ];
 
     private void SetFormatting(string key, string? value)

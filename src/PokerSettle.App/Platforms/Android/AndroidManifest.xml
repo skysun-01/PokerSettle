@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-	<!-- All data stays on the device: no cloud backup and no INTERNET permission
-	     (Debug builds get INTERNET added automatically for the debugger; Release does not). -->
+	<!-- All data stays on the device: no cloud backup. -->
 	<application android:allowBackup="false" android:icon="@mipmap/appicon" android:roundIcon="@mipmap/appicon_round" android:supportsRtl="true"></application>
+	<!-- Only for publishing the online leaderboard (names and results) to the user's own Google Sheet.
+	     Nothing else uses the network. -->
+	<uses-permission android:name="android.permission.INTERNET" />
 	<!-- Light haptic on buy-in. Normal permission, no prompt. -->
 	<uses-permission android:name="android.permission.VIBRATE" />
 	<!-- Picking a backup file to import on Android 12 and older. -->

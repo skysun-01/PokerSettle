@@ -64,6 +64,8 @@ public partial class App : Application
                 environment.OsDescription, data.DatabaseSizeBytes(), data.IsDemo);
             if (_crashMarker.PreviousSessionCrashed) _log.PreviousSessionCrashed();
             await _services.GetRequiredService<KeepAwakeCoordinator>().RefreshAsync();
+            // Created now so it hears finalized games and re-publishes the online leaderboard.
+            _services.GetRequiredService<Core.Leaderboard.LeaderboardPublisher>();
         }
         catch (Exception ex)
         {

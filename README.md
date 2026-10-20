@@ -2,7 +2,7 @@
 
 Track buy-ins and cash-outs at your home poker cash game, work out who pays whom, remember your players, and keep an all-time board of who's up and who's down.
 
-It runs on your Android phone (used at the table) and on your Windows PC. There is no server, no account and no internet: **all data stays on the device**.
+It runs on your Android phone (used at the table) and on your Windows PC. There is no server and no account: **all data stays on the device**. The only optional exception is the [online leaderboard](#online-leaderboard), which publishes names and results to a Google Sheet you own.
 
 ## What it does
 
@@ -58,7 +58,7 @@ This creates `%USERPROFILE%\.pokersettle\poker-settle.keystore` and asks for a p
 powershell -ExecutionPolicy Bypass -File scripts\build-android-release.ps1
 ```
 
-It takes the keystore password from `POKERSETTLE_KEYSTORE_PASSWORD`, else from `keystore-password.txt` next to the keystore, else asks. It builds `artifacts\PokerSettle-1.0.0.apk` (about 42 MB; runs on 64-bit and 32-bit ARM phones) and checks it: the signature, that it does **not** request internet access, and that its native libraries support 16 KB memory pages (needed on newer phones).
+It takes the keystore password from `POKERSETTLE_KEYSTORE_PASSWORD`, else from `keystore-password.txt` next to the keystore, else asks. It builds `artifacts\PokerSettle-<version>.apk`, e.g. `PokerSettle-1.1.0.apk` (about 42 MB; runs on 64-bit and 32-bit ARM phones) and checks it: the signature, and that its native libraries support 16 KB memory pages (needed on newer phones). It also lists the permissions the APK requests; internet access is used only by the optional [online leaderboard](#online-leaderboard).
 
 ### 3. Install it
 
@@ -100,6 +100,24 @@ Settings → About shows the exact database path and size, the app version and t
 - The file is readable JSON. Amounts are whole numbers in paise (1/100 of the currency), or whole chips for chip-mode games.
 
 **Clear all data** (Settings) deletes everything after you type `DELETE`; a snapshot is kept in `snapshots\`.
+
+## Online leaderboard
+
+Optional and free: the app publishes the all-time board (names and results only, never phone numbers or UPI IDs) to a Google Sheet you own, and everyone with the link can view it. Nobody else can change it.
+
+**One-time setup (about 10 minutes, on a PC):**
+
+1. Create a Google Sheet (any name) at [sheets.google.com](https://sheets.google.com).
+2. In the sheet: **Extensions → Apps Script**. Delete what's there, paste the contents of [scripts/leaderboard-apps-script.gs](scripts/leaderboard-apps-script.gs) and save.
+3. In the Apps Script editor: **Project Settings (gear) → Script properties → Add script property**: name `SECRET`, value a long random password (e.g. 20+ letters and digits). Save.
+4. **Deploy → New deployment → Select type: Web app**. *Execute as:* **Me**. *Who has access:* **Anyone**. Click **Deploy**, allow access to your account when asked (Google warns that the app isn't verified, because it's your own script: *Advanced → Go to … (unsafe)*), and copy the **Web app URL** (ends in `/exec`).
+5. In Poker Settle: **Settings → Online leaderboard**: paste the web app URL and the same secret, then **Publish now**. The sheet gets a *Leaderboard* tab.
+
+**Sharing:** use **Copy link** in Settings (the `/exec` URL): it opens a read-only leaderboard page on any phone. Or share the Google Sheet itself with *Share → General access: Anyone with the link → Viewer*.
+
+With **Publish automatically** on (the default), the app re-publishes after a game is finalized, reopened or deleted, and when players are renamed, archived or merged. If the phone is offline you'll see a message; use **Publish now** later. The demo database is never published.
+
+**If you change the script later**, use **Deploy → Manage deployments → Edit → Version: New version** so the URL stays the same. Anyone with the URL can view it, but only someone with the secret can change it. If the secret leaks, change it in Script properties and in the app.
 
 ## Debug logs
 
@@ -145,7 +163,7 @@ Choices made where the spec left room:
 11. **Late players** get one default buy-in when the game was started with "Everyone starts with 1 buy-in". Players can be removed from a live game (with Undo).
 12. **Reopen:** clears results and adjustments; payments are recalculated at the next finalize, and paid marks are kept for payments that come out identical.
 13. **Import:** replaces all data (snapshot first), recomputes nets from the rows, and restores currency, number format and game defaults (not theme or logging). "Share backup" also counts as a backup for the reminder.
-14. **Privacy:** Android cloud backup is disabled (`allowBackup=false`); the release APK has no INTERNET permission (checked by the build script).
+14. **Privacy:** Android cloud backup is disabled (`allowBackup=false`); the release APK requests INTERNET only for the optional online leaderboard, which sends names and results to the user's own Google Apps Script and nothing else.
 15. **Crash detection:** an empty marker file exists only while the app is in the foreground; if it's still there at launch, the last session ended unexpectedly.
 16. **Snackbar** is an in-app control placed on every page through a shared page template; Undo stays available for 7 seconds.
 17. **Line breaks:** an invisible word joiner keeps the sign and amount together ("−₹500" never splits across lines). It is stripped from shared/copied text.

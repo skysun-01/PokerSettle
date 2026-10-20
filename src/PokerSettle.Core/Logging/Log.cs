@@ -128,6 +128,12 @@ public static partial class Log
     [LoggerMessage(520, LogLevel.Information, "Game {GameId} details updated")]
     public static partial void GameUpdated(this ILogger logger, long gameId);
 
+    [LoggerMessage(521, LogLevel.Information, "Leaderboard published: {PlayerCount} players in {DurationMs} ms")]
+    public static partial void LeaderboardPublished(this ILogger logger, int playerCount, long durationMs);
+
+    [LoggerMessage(522, LogLevel.Warning, "Leaderboard publish failed: {Reason}")]
+    public static partial void LeaderboardPublishFailed(this ILogger logger, string reason);
+
     // ---- Errors (9xx)
     [LoggerMessage(900, LogLevel.Error, "Command {Command} failed")]
     public static partial void CommandFailed(this ILogger logger, Exception exception, string command);

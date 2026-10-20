@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using PokerSettle.Core;
 using PokerSettle.Core.Data;
 using PokerSettle.Core.Diagnostics;
+using PokerSettle.Core.Leaderboard;
 using PokerSettle.Core.Logging;
 using PokerSettle.Core.Models;
 using PokerSettle.Core.Services;
@@ -158,6 +159,20 @@ public sealed class FakeEnvironment(string directory) : IAppEnvironment
     public bool IsAndroid => true;
 }
 
+public sealed class FakeLeaderboardTransport : ILeaderboardTransport
+{
+    public List<(string Url, string Json)> Posts { get; } = [];
+
+    /// <summary>What the "Apps Script" answers; set to throw to simulate being offline.</summary>
+    public Func<string, string> Respond { get; set; } = _ => """{"ok":true}""";
+
+    public Task<string> PostAsync(string url, string json, CancellationToken cancellationToken)
+    {
+        Posts.Add((url, json));
+        return Task.FromResult(Respond(json));
+    }
+}
+
 /// <summary>Core services and ViewModels wired up with fakes and a temp database.</summary>
 public sealed class Harness : IAsyncDisposable
 {
@@ -189,6 +204,7 @@ public sealed class Harness : IAsyncDisposable
         services.AddSingleton<IAppEnvironment>(new FakeEnvironment(dir.Path));
         services.AddPokerSettleCore();
         services.AddSingleton<IClock>(Clock);
+        services.AddSingleton<ILeaderboardTransport>(LeaderboardTransport);
         _provider = services.BuildServiceProvider();
     }
 
@@ -203,6 +219,7 @@ public sealed class Harness : IAsyncDisposable
     public FakeHaptics Haptics { get; } = new();
     public FakeScreen Screen { get; } = new();
     public FakeLauncher Launcher { get; } = new();
+    public FakeLeaderboardTransport LeaderboardTransport { get; } = new();
 
     public DataStore Data => Get<DataStore>();
     public IMessenger Messenger => Get<IMessenger>();

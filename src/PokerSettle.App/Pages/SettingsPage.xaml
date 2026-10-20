@@ -100,6 +100,52 @@
                 </VerticalStackLayout>
             </Border>
 
+            <!-- Online leaderboard -->
+            <Label Text="Online leaderboard" Style="{StaticResource SectionTitle}" />
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Publishes the all-time board (names and results only) to your Google Sheet. Anyone with the link can view it; only this app can change it."
+                           Style="{StaticResource Caption}" />
+                    <Label Text="Web app URL" Style="{StaticResource Secondary}" />
+                    <Entry Text="{Binding LeaderboardUrl}"
+                           Placeholder="https://script.google.com/macros/s/…/exec"
+                           Keyboard="Url"
+                           ReturnType="Next"
+                           ReturnCommand="{Binding SaveLeaderboardCommand}"
+                           SemanticProperties.Description="Leaderboard web app URL">
+                        <Entry.Behaviors>
+                            <toolkit:EventToCommandBehavior EventName="Unfocused" Command="{Binding SaveLeaderboardCommand}" />
+                        </Entry.Behaviors>
+                    </Entry>
+                    <Label Text="Secret" Style="{StaticResource Secondary}" />
+                    <Entry Text="{Binding LeaderboardSecret}"
+                           IsPassword="True"
+                           ReturnType="Done"
+                           ReturnCommand="{Binding SaveLeaderboardCommand}"
+                           SemanticProperties.Description="Leaderboard secret">
+                        <Entry.Behaviors>
+                            <toolkit:EventToCommandBehavior EventName="Unfocused" Command="{Binding SaveLeaderboardCommand}" />
+                        </Entry.Behaviors>
+                    </Entry>
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                        <VerticalStackLayout VerticalOptions="Center">
+                            <Label Text="Publish automatically" />
+                            <Label Text="After a game is finalized, reopened or deleted, and when players change." Style="{StaticResource Caption}" />
+                        </VerticalStackLayout>
+                        <Switch Grid.Column="1" IsToggled="{Binding LeaderboardAutoPublish}" VerticalOptions="Center"
+                                SemanticProperties.Description="Publish the leaderboard automatically" />
+                    </Grid>
+                    <Label Text="{Binding LeaderboardStatus}" Style="{StaticResource Secondary}" />
+                    <FlexLayout Wrap="Wrap">
+                        <Button Text="Publish now" Command="{Binding PublishLeaderboardCommand}" Margin="0,0,8,8" />
+                        <Button Text="Open" Style="{StaticResource OutlineButton}" Command="{Binding OpenLeaderboardCommand}" Margin="0,0,8,8"
+                                SemanticProperties.Hint="Opens the leaderboard page in the browser" />
+                        <Button Text="Copy link" Style="{StaticResource OutlineButton}" Command="{Binding CopyLeaderboardLinkCommand}" Margin="0,0,8,8"
+                                SemanticProperties.Hint="Copies the view link to share with the group" />
+                    </FlexLayout>
+                </VerticalStackLayout>
+            </Border>
+
             <!-- Troubleshooting -->
             <Label Text="Troubleshooting" Style="{StaticResource SectionTitle}" />
             <Border Style="{StaticResource Card}">

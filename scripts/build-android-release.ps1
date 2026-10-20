@@ -1,7 +1,7 @@
 <#
 .SYNOPSIS
   Builds a signed release APK for sideloading, then checks it: signature, 16 KB page alignment of
-  native libraries, and that it does not request the INTERNET permission.
+  native libraries, and lists the permissions it requests (INTERNET is only for the online leaderboard).
 .DESCRIPTION
   The password is read from POKERSETTLE_KEYSTORE_PASSWORD if set, otherwise prompted. It is passed to
   the build through an environment variable, never on the command line.
@@ -64,11 +64,10 @@ $certs = & $apksigner verify --print-certs $apk
 if ($LASTEXITCODE -ne 0) { throw "APK signature verification failed." }
 $certs | Select-Object -First 2 | ForEach-Object { "  $_" }
 
-# 2. No INTERNET permission in the release build
+# 2. Permissions (INTERNET is only for publishing the online leaderboard)
 $aapt2 = Find-BuildTool "aapt2"
 $permissions = & $aapt2 dump permissions $apk
 $permissions | ForEach-Object { "  $_" }
-if ($permissions -match "android.permission.INTERNET") { throw "The release APK requests INTERNET; it must not." }
 
 # 3. 16 KB page alignment of native libraries
 & powershell -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot "check-16kb-alignment.ps1") $apk

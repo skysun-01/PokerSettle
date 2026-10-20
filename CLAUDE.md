@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Guidance for working on Poker Settle: an offline .NET MAUI app (Android + unpackaged Windows) for settling home poker cash games. No backend, no network calls; all data lives on the device.
+Guidance for working on Poker Settle: an offline .NET MAUI app (Android + unpackaged Windows) for settling home poker cash games. No backend; all data lives on the device. The only network call is the optional online leaderboard (`Leaderboard/LeaderboardPublisher`), which POSTs board rows to the user's own Google Apps Script (`scripts/leaderboard-apps-script.gs`).
 
 ## Commands
 
@@ -11,7 +11,7 @@ All scripts are Windows PowerShell 5.1-compatible; run them with `powershell -Ex
 | All tests (unit, FsCheck, migrations, perf, ViewModel integration) | `dotnet test tests\PokerSettle.Tests` |
 | Build Windows | `dotnet build src\PokerSettle.App -f net10.0-windows10.0.19041.0` |
 | Build Android (debug) | `dotnet build src\PokerSettle.App -f net10.0-android` |
-| Signed release APK (+ signature, no-INTERNET and 16 KB checks) | `scripts\build-android-release.ps1` (keystore from `scripts\create-keystore.ps1`) |
+| Signed release APK (+ signature, permission listing and 16 KB checks) | `scripts\build-android-release.ps1` (keystore from `scripts\create-keystore.ps1`) |
 | Check native libs are 16 KB aligned | `scripts\check-16kb-alignment.ps1 <apk/aar/folder>` |
 
 Debug-only environment variables (ignored in Release): `POKERSETTLE_DATA_DIR=<folder>` runs against a scratch data folder; `POKERSETTLE_DEBUG_LOG=1` forces debug logging on. Use them to run a second copy without touching real data (build with `-p:BaseOutputPath=<elsewhere>\` if the real app is running).
@@ -26,6 +26,7 @@ src/PokerSettle.Core/      net10.0 library, no MAUI references (everything testa
   Stats/                   board math, time filters, chart data
   Players/                 name cleanup/keys/close matches, suggestion ranking
   Data/                    DataStore (the ONLY database access), Migrations, Sql helper, DemoData
+  Leaderboard/             publishes the board to a Google Sheet via Apps Script (HTTP behind ILeaderboardTransport)
   Backup/                  JSON backup format (source-generated), BackupService, BackupCoordinator (UI flows)
   Logging/                 MEL provider, [LoggerMessage] catalog (Log.cs), Channel writer, rolling files
   Diagnostics/             CrashMarker, DebugReportBuilder
